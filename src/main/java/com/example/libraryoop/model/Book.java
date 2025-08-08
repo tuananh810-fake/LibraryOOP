@@ -1,6 +1,5 @@
 package com.example.libraryoop.model;
 
-import java.time.LocalDate;
 import java.time.Year;
 
 public class Book {
@@ -10,7 +9,7 @@ public class Book {
     private String category;   // thể loại sách
     private String publishingCompany;   // nhà xuất bản
     private Year publishingYear;   // năm xuất bản
-    private int numberOfBook;   // số lượng sách
+    private int numberOfBooks;   // số lượng sách
 
     /**
      * Constructer Default.
@@ -21,14 +20,15 @@ public class Book {
     /**
      * Constructer with parameters.
      */
-    public Book(String idBook, String nameBook, String author, String category, String publishingCompany, Year publishingYear, int reprintTimes, int numberOfBook) {
+    public Book(String idBook, String nameBook, String author, String category, 
+    String publishingCompany, Year publishingYear, int numberOfBooks) {
         this.idBook = idBook;
         this.nameBook = nameBook;
         this.author = author;
         this.category = category;
         this.publishingCompany = publishingCompany;
         this.publishingYear = publishingYear;
-        this.numberOfBook = numberOfBook;
+        this.numberOfBooks = numberOfBooks;
     }
 
     /**
@@ -82,16 +82,20 @@ public class Book {
         this.publishingYear = publishingYear;
     }
 
-    public int getNumberOfBook() {
-        return numberOfBook;
+    public int getNumberOfBooks() {
+        return numberOfBooks;
     }
 
-    public void setNumberOfBook(int numberOfBook) {
-        this.numberOfBook = numberOfBook;
+    public void setNumberOfBooks(int numberOfBooks) {
+        this.numberOfBooks = numberOfBooks;
     }
 
     @Override
     public String toString() {
         return idBook;
+    }
+
+    public String toCSV() {
+        return idBook + "," + nameBook + "," + author + "," + category + "," + publishingCompany + "," + publishingYear.getValue() + "," + numberOfBooks + "\n";
     }
 }
