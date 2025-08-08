@@ -1,0 +1,33 @@
+.sidebar-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+    -fx-font-size: 18px;
+    -fx-alignment: CENTER_LEFT;
+}
+
+.sidebar-button:hover{
+    -fx-background-color: #232aa1;
+}
+
+.sidebar {
+    -fx-background-color: linear-gradient(to bottom right, #41a1ea, #11144f);
+}
+
+.dashboard-card1 {
+    -fx-background-color: #7d85e0;
+    -fx-background-radius: 10px;
+}
+
+.dashboard-card2 {
+    -fx-background-color: #784cd8;
+    -fx-background-radius: 10px;
+}
+
+.top-bar {
+    -fx-background-radius: 10px;
+}
+
+.dashboard-card3 {
+    -fx-background-color: #efeb16;
+    -fx-background-radius: 10px;
+}
