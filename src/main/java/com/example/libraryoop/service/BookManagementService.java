@@ -69,4 +69,49 @@ public class BookManagementService {
         FileBookCSV.overwriteBooksToCSV(bookCatalog);
         System.out.println("Book updated: " + oldNameBook + " to " + newNameBook + " by " + newAuthor);
     }
+
+    public int findBookIndexById(String id) {
+        // Find index of item by id
+        for (int i = 0; i < bookCatalog.size(); i++) {
+            if (bookCatalog.get(i).getIdBook().equals(id)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public List<Book> findBookByIdOrName(String input) {
+        // Search items by id or name
+        List<Book> results = new ArrayList<>();
+        for (Book book : bookCatalog) {
+            if (book.getIdBook().equals(input) || book.getNameBook().equalsIgnoreCase(input)) {
+                results.add(book);
+            }
+        }
+        return results;
+    }
+
+    public List<String> getBookListId() {
+        // Return list of all IDs
+        List<String> ids = new ArrayList<>();
+        for (Book book : bookCatalog) {
+            ids.add(book.getIdBook());
+        }
+        return ids;
+    }
+
+    public List<Book> getAllBooks() {
+        // Return list of all items
+        return new ArrayList<>(bookCatalog);
+    }
+
+    public Book getBooksById(String id) {
+        // Return item by id
+        for (Book book : bookCatalog) {
+            if (book.getIdBook().equals(id)) {
+                return book;
+            }
+        }
+        return null;
+    }
 }
