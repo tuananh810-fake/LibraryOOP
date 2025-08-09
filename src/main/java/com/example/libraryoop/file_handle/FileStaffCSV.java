@@ -7,7 +7,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
+import java.nio.file.StandardOpenOption;;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringJoiner;
@@ -55,10 +55,11 @@ public class FileStaffCSV {
         }
     }
     
-    public void readStaffFile() {
+    public List<Staff> readStaffFile() {
         try {
             if (Files.notExists(EXTERNAL_PATH.getParent())) {
                 Files.createDirectories(EXTERNAL_PATH.getParent());
+                return new ArrayList<>();
             }
 
             if (Files.notExists(EXTERNAL_PATH)) {
@@ -66,40 +67,71 @@ public class FileStaffCSV {
                 StandardCharsets.UTF_8, StandardOpenOption.CREATE)) {
                     writer.write(HEADER);
                     writer.newLine();
+                    return new ArrayList<>();
                 }
             }
+            
+            List<Staff> staffs = new ArrayList<>();
 
             try (BufferedReader reader = Files.newBufferedReader(EXTERNAL_PATH, StandardCharsets.UTF_8)) {
                 String line;
-                List<Staff> staffs = new ArrayList<>();
-                boolean isFirstLine = true;
+
+                reader.readLine();
 
                 while ((line = reader.readLine()) != null) {
-                    if (isFirstLine) {
-                        isFirstLine = false;
-                        continue;
-                    }
+                    line = line.trim();
                     
-                    line.trim();
+                    if (line.isEmpty()) continue;
 
                     String[] parts = line.split (" \\|\\| ");
 
-                    String id = parts.length > 0 ? emptyToNull(parts[0].trim()) : "";
-                    String name = parts.length > 1 ? emptyToNull(parts[1].trim()) : "";
-                    String address = parts.length > 2 ? emptyToNull(parts[2].trim()) : "";
-                    String email = parts.length > 3 ? emptyToNull(parts[3].trim()) : "";
-                    String phonenumber = parts.length > 4 ? emptyToNull(parts[4].trim()) : "";
-                    String role = parts.length > 5 ? emptyToNull(parts[5].trim()) : "";
-                    String username = parts.length > 6 ? emptyToNull(parts[6].trim()) : "";
-                    String password = parts.length > 7 ? emptyToNull(parts[7].trim()) : "";
+                    if (parts.length < 8) {
+                        System.err.println("Invalid format: " + line);
+                        continue;
+                    }
 
-                    Staff staff = new Staff(id, name, email, phonenumber, address, role, username, password);
+                    String id = emptyToNull(parts[0].trim());
+                    String name = emptyToNull(parts[1].trim());
+                    String address = emptyToNull(parts[2].trim());
+                    String email = emptyToNull(parts[3].trim());
+                    String phonenumber = emptyToNull(parts[4].trim());
+                    String role = emptyToNull(parts[5].trim());
+                    String username = emptyToNull(parts[6].trim());
+                    String password = emptyToNull(parts[7].trim());
+
+                    Staff staff = new Staff(id, name, address, email, phonenumber, role, username, password);
                     staffs.add(staff);
                 }
             }
+            
+            return staffs;
+
         } catch (IOException e) {
             System.err.println("Loi khi xu ly file" + e.getMessage());
+            return new ArrayList<>();
         }
+    }
+
+    public void staffLongingIn(String username, String password) {
+        List<Staff> staffs = readStaffFile();
+        
+        if (staffs.isEmpty()) {
+            System.err.println("Please register before log in");
+        }
+
+        for (Staff staff : staffs) {
+            if (staff.getUsername() == username && staff.getPassWord() == password) {
+                System.out.println("Đăng nhập thành công");
+            } else if (staff.getUsername() != username) {
+                System.err.println("Không tìm thấy tên đăng nhập");
+            } else if (staff.getPassWord() != password) {
+                System.err.println("Sai tên đăng nhập hoặc tài khoản");
+            }
+        }
+    }
+
+    public void updateStaffAccount() {
+
     }
 
     private static String nullToEmpty(String s) {

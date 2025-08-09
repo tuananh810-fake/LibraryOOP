@@ -19,9 +19,8 @@ public class Staff {
     /**
      * Constructor with parameters.
      */
-    public Staff(String nameStaff, String emailStaff, String numberPhoneStaff, String addressStaff, String username, String password, String role) {
-
-
+    public Staff(String nameStaff, String emailStaff, String numberPhoneStaff, 
+            String addressStaff, String username, String password, String role) {
         this.nameStaff = nameStaff;
         this.emailStaff = emailStaff;
         this.numberPhoneStaff = numberPhoneStaff;
@@ -34,8 +33,8 @@ public class Staff {
     /**
      * Constructor with all parameters.
      */
-    public Staff(String idStaff, String nameStaff, String emailStaff,
-                 String numberPhoneStaff, String addressStaff, String role, String username, String password) {
+    public Staff(String idStaff, String nameStaff, String addressStaff, String emailStaff,
+                String numberPhoneStaff, String role, String username, String password) {
         this.idStaff = idStaff;
         this.nameStaff = nameStaff;
         this.emailStaff = emailStaff;
