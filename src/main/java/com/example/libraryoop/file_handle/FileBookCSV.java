@@ -33,7 +33,7 @@ public class FileBookCSV {
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Error reading books from CSV", e);
         }
         return books;
     }
@@ -42,7 +42,7 @@ public class FileBookCSV {
         try (java.io.FileWriter writer = new java.io.FileWriter(CSV_FILE_PATH, true)) {
             writer.append(book.toCSV());
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Error writing book to CSV", e);
         }
     }
 
@@ -52,7 +52,7 @@ public class FileBookCSV {
                 writer.write(book.toCSV());
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Error overwriting books to CSV", e);
         }
     }
 }

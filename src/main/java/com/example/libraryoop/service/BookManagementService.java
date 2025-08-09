@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.example.libraryoop.file_handle.FileBookCSV;
 import com.example.libraryoop.model.Book;
+import com.example.libraryoop.util.IdGenerator;
 
 
 public class BookManagementService {
@@ -33,7 +34,7 @@ public class BookManagementService {
 
     public void addBook(String idBook, String nameBook, String author, String category, String publishingCompany, Year publishingYear, int numberOfBooks) {
         Book newBook = new Book(idBook, nameBook, author, category, publishingCompany, publishingYear, numberOfBooks);
-        idBook = java.util.UUID.randomUUID().toString();
+        idBook = IdGenerator.generateId("B");
         newBook.setIdBook(idBook);
         bookCatalog.add(newBook);
         FileBookCSV.writeBookToCSV(newBook);
@@ -67,5 +68,50 @@ public class BookManagementService {
         }
         FileBookCSV.overwriteBooksToCSV(bookCatalog);
         System.out.println("Book updated: " + oldNameBook + " to " + newNameBook + " by " + newAuthor);
+    }
+
+    public int findBookIndexById(String id) {
+        // Find index of item by id
+        for (int i = 0; i < bookCatalog.size(); i++) {
+            if (bookCatalog.get(i).getIdBook().equals(id)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public List<Book> findBookByIdOrName(String input) {
+        // Search items by id or name
+        List<Book> results = new ArrayList<>();
+        for (Book book : bookCatalog) {
+            if (book.getIdBook().equals(input) || book.getNameBook().equalsIgnoreCase(input)) {
+                results.add(book);
+            }
+        }
+        return results;
+    }
+
+    public List<String> getBookListId() {
+        // Return list of all IDs
+        List<String> ids = new ArrayList<>();
+        for (Book book : bookCatalog) {
+            ids.add(book.getIdBook());
+        }
+        return ids;
+    }
+
+    public List<Book> getAllBooks() {
+        // Return list of all items
+        return new ArrayList<>(bookCatalog);
+    }
+
+    public Book getBooksById(String id) {
+        // Return item by id
+        for (Book book : bookCatalog) {
+            if (book.getIdBook().equals(id)) {
+                return book;
+            }
+        }
+        return null;
     }
 }
