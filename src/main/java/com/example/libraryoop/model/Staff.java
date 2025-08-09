@@ -104,4 +104,12 @@ public class Staff {
     public void setUsername(String username) {
         this.username = username;
     }
+
+    public String getPassWord() {
+        return password;
+    }
+
+    public void setPassWord(String password) {
+        this.password = password;
+    }
 }
