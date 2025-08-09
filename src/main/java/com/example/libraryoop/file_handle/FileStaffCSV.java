@@ -83,7 +83,7 @@ public class FileStaffCSV {
                     
                     if (line.isEmpty()) continue;
 
-                    String[] parts = line.split (" \\|\\| ");
+                    String[] parts = line.split ("\\|\\|", -1);
 
                     if (parts.length < 8) {
                         System.err.println("Invalid format: " + line);
