@@ -1,76 +1,129 @@
 package com.example.libraryoop.file_handle;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.List;
+import java.util.StringJoiner;
 
 import com.example.libraryoop.model.Reader;
 
 public class FileReaderCSV {
-    public static final String NULLVALUE = ""; // Định nghĩa giá trị null trong file CSV
- 
-    // Phương thức ghi danh sách Reader vào file CSV
+
+    private static final Path EXTERNAL_PATH = Paths.get("data", "ReaderData.csv");
+    private static final String HEADER = "ID || NAME || ADDRESS || EMAIL || PHONENUMBER || EXPIRY || ISLOCK";
+    private static final String DELIM_REGEX = "\\s*\\|\\|\\s*"; // split theo " || " (có thể có khoảng trắng)
+    public static final String NULLVALUE = ""; // định nghĩa giá trị null trong file CSV
+
+    /**
+     * Ghi danh sách Reader ra file external (data/ReaderData.csv).
+     */
     public static void writeFile(List<Reader> list) {
-        try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(
-             "src\\main\\java\\com\\example\\libraryoop\\database\\ReaderData.csv"))) {
-                bufferedWriter.write("ID || NAME || ADDRESS || EMAIL || PHONENUMBER || EXPIRY || ISLOCK"); // Tiêu đề cột Reader.CSV
-                bufferedWriter.newLine(); // Xuống dòng sau tiêu đề
+        try {
+            // tạo folder nếu chưa tồn tại
+            if (Files.notExists(EXTERNAL_PATH.getParent())) {
+                Files.createDirectories(EXTERNAL_PATH.getParent());
+            }
+            // ghi file (utf-8), xóa nội dung cũ
+            try (BufferedWriter bw = Files.newBufferedWriter(EXTERNAL_PATH,
+                    StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
+                bw.write(HEADER);
+                bw.newLine();
                 for (Reader reader : list) {
-                    bufferedWriter.write(reader.getIdReader() + " || " +
-                            reader.getNameReader() + " || " +
-                            reader.getAddressReader() + " || " +
-                            reader.getEmailReader() + " || " +
-                            reader.getPhoneNumber() + " || " +
-                            reader.getExpiry() + " || " +
-                            reader.isLock());
-                    bufferedWriter.newLine(); // Xuống dòng sau mỗi bản ghi
+                    StringJoiner sj = new StringJoiner(" || ");
+                    sj.add(nullToEmpty(reader.getIdReader()));
+                    sj.add(nullToEmpty(reader.getNameReader()));
+                    sj.add(nullToEmpty(reader.getAddressReader()));
+                    sj.add(nullToEmpty(reader.getEmailReader()));
+                    sj.add(nullToEmpty(reader.getPhoneNumber()));
+                    sj.add(reader.getExpiry() == null ? "" : reader.getExpiry().toString()); // ISO format
+                    sj.add(Boolean.toString(reader.isLock()));
+                    bw.write(sj.toString());
+                    bw.newLine();
                 }
+            }
         } catch (IOException e) {
-            throw new RuntimeException(e); 
+            throw new RuntimeException("Error writing ReaderData.csv: " + e.getMessage(), e);
         }
     }
- 
-    // Phương thức đọc file CSV và trả về danh sách Reader
+
+    /**
+     * Đọc file CSV vào list (list được truyền vào và sẽ được clear trước khi load).
+     * Nếu file không tồn tại sẽ tạo file rỗng và trả về (list để trống).
+     */
     public static void readFile(List<Reader> list) {
-        String line = ""; // Biến để lưu từng dòng đọc từ file
-        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(
-             "src\\main\\java\\org\\example\\libraryoop\\database\\ReaderData.csv"))) {
-            // Đọc tiêu đề cột
-            bufferedReader.readLine();
-            while (true) {
-                line = bufferedReader.readLine(); // Đọc từng dòng
-                if (line == null || line.isEmpty()) { // Kiểm tra nếu dòng đọc là null hoặc rỗng
-                    break; // Dừng nếu không còn dòng nào để đọc
+        try {
+            // tạo folder/file nếu chưa có để tránh FileNotFoundException
+            if (Files.notExists(EXTERNAL_PATH.getParent())) {
+                Files.createDirectories(EXTERNAL_PATH.getParent());
+            }
+            if (Files.notExists(EXTERNAL_PATH)) {
+                // tạo file rỗng với header
+                try (BufferedWriter bw = Files.newBufferedWriter(EXTERNAL_PATH,
+                        StandardCharsets.UTF_8, StandardOpenOption.CREATE)) {
+                    bw.write(HEADER);
+                    bw.newLine();
                 }
-                String readerArray[] = line.split("||"); // Tách các trường trong dòng
-                String id = readerArray[0]; // Lấy ID độc giả
-                String name = readerArray[1]; // Lấy tên độc giả
-                String address;
-                if (readerArray[2].equals(NULLVALUE)) { // Kiểm tra nếu địa chỉ là NULLVALUE
-                    address = NULLVALUE; // Không cần ghi ngay,có thể thêm vào sau
-                } else {
-                    address = readerArray[2]; // Lấy địa chỉ độc giả
+                return; // file mới, danh sách để trống
+            }
+
+            // đọc file
+            try (BufferedReader br = Files.newBufferedReader(EXTERNAL_PATH, StandardCharsets.UTF_8)) {
+                String line;
+                boolean first = true;
+                list.clear();
+                while ((line = br.readLine()) != null) {
+                    if (first) { // bỏ header nếu có
+                        first = false;
+                        if (line.trim().startsWith("ID")) continue;
+                    }
+                    if (line.trim().isEmpty()) continue;
+
+                    // split theo "||" (cho phép khoảng trắng xung quanh)
+                    String[] cols = line.split(DELIM_REGEX, -1); // -1 giữ các trường rỗng
+
+                    String id = cols.length > 0 ? emptyToNull(cols[0].trim()) : "";
+                    String name = cols.length > 1 ? emptyToNull(cols[1].trim()) : "";
+                    String address = cols.length > 2 ? emptyToNull(cols[2].trim()) : "";
+                    String email = cols.length > 3 ? emptyToNull(cols[3].trim()) : "";
+                    String phone = cols.length > 4 ? emptyToNull(cols[4].trim()) : "";
+
+                    LocalDateTime expiry = null;
+                    if (cols.length > 5 && cols[5] != null && !cols[5].trim().isEmpty()) {
+                        try {
+                            expiry = LocalDateTime.parse(cols[5].trim());
+                        } catch (DateTimeParseException ex) {
+                            System.err.println("Invalid date format for expiry: " + cols[5].trim());
+                            expiry = null;
+                        }
+                    }
+
+                    boolean lock = false;
+                    if (cols.length > 6 && cols[6] != null && !cols[6].trim().isEmpty()) {
+                        lock = Boolean.parseBoolean(cols[6].trim());
+                    }
+
+                    Reader r = new Reader(id, name, address, email, phone, expiry, lock);
+                    list.add(r);
                 }
-                String email;
-                if (readerArray[3].equals(NULLVALUE)) { 
-                    email = NULLVALUE; 
-                } else {
-                    email = readerArray[3]; // Lấy email độc giả
-                }
-                String phoneNumber;
-                if (readerArray[4].equals(NULLVALUE)) { 
-                    phoneNumber = NULLVALUE; 
-                } else {
-                    phoneNumber = readerArray[4]; // Lấy số điện thoại độc giả
-                }
-                LocalDateTime expiry = LocalDateTime.parse(readerArray[5]); // Lấy ngày hết hạn thẻ mượn sách
-                boolean lock = Boolean.parseBoolean(readerArray[6]); // Lấy trạng thái khóa của độc giả
-                list.add(new Reader(id, name, address, email, phoneNumber, expiry, lock)); // Thêm thông tin độc giả vào danh sách
             }
         } catch (IOException e) {
-                throw new RuntimeException(e); 
-            }
+            throw new RuntimeException("Error reading ReaderData.csv: " + e.getMessage(), e);
         }
+    }
+
+    private static String nullToEmpty(String s) {
+        return s == null ? "" : s;
+    }
+
+    private static String emptyToNull(String s) {
+        return (s == null || s.isEmpty()) ? null : s;
+    }
 }
-
-

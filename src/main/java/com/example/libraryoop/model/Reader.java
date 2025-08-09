@@ -1,6 +1,5 @@
 package com.example.libraryoop.model;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class Reader {
