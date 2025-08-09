@@ -7,6 +7,7 @@ public class PhoneNumberValidate {
     private static final String PHONENUMBER_REGEX = "^(0?)(3[2-9]|5[6|8|9]|7[0|6-9]|8[0-6|8|9]|9[0-4|6-9])[0-9]{7}$";
     private static Pattern pattern;
 
+    
     public PhoneNumberValidate() {
         pattern = Pattern.compile(PHONENUMBER_REGEX);
     }

@@ -1,8 +1,5 @@
 package com.example.libraryoop.service;
 
-/**
- * Import các 
- */
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,79 +8,150 @@ import java.util.Map;
 import com.example.libraryoop.file_handle.FileReaderCSV;
 import com.example.libraryoop.model.Reader;
 import com.example.libraryoop.validate.EmailValidate;
+import com.example.libraryoop.util.IdGenerator;
+import com.example.libraryoop.validate.PhoneNumberValidate;
 
+/**
+ * Lớp quản lý các chức năng liên quan đến Reader (độc giả)
+ */
 public class ReaderManagementService implements IManagement<Reader> {
-    private final static List<Reader> readers = new ArrayList<>(); // Danh sách lưu trữ Reader
-
+    // Danh sách lưu trữ tất cả độc giả
+    private final static List<Reader> readers = new ArrayList<>();
+    private final PhoneNumberValidate phoneValidator = new PhoneNumberValidate();
+    private final EmailValidate emailValidator = new EmailValidate();
     /**
-     * Constructer.
+     * Constructor: Đọc dữ liệu từ file CSV và kiểm tra trạng thái khóa
      */
     public ReaderManagementService() {
-        FileReaderCSV.readFile(readers); // Đọc dữ liệu từ file CSV vào danh sách readers
-        autoSetLock();   // Tự động thiết lập trạng thái khóa cho các độc giả
-  }
+        FileReaderCSV.readFile(readers);
+        autoSetLock();
+    }
 
+    /**
+     * Thêm một độc giả vào hệ thống và lưu vào file
+     * @param reader Đối tượng Reader cần thêm
+     */
     @Override
     public void add(Reader reader) {
-        readers.add(reader); // Thêm độc giả vào danh sách
-        FileReaderCSV.writeFile(readers); // Ghi lại danh sách độc giả vào file CSV
+        if (reader == null) {
+            throw new IllegalArgumentException("Reader không thể null");
+        }
+        readers.add(reader);
+        FileReaderCSV.writeFile(readers);
     }
 
+    /**
+     * Thêm độc giả mới với ID được tạo tự động
+     * @param reader Thông tin độc giả cần thêm
+     */
+    public void addNewReader(Reader reader) {
+        if (reader == null) {
+            throw new IllegalArgumentException("Reader không thể null");
+        }
+
+        // Tạo ID mới và đảm bảo không trùng lặp
+        String newId;
+        do {
+            newId = IdGenerator.generateId("R");
+        } while (getReaderById(newId) != null);
+
+        // Tạo reader mới với ID mới được tạo
+        Reader newReader = new Reader(
+            newId,
+            reader.getNameReader(),
+            reader.getAddressReader(),
+            reader.getEmailReader(),
+            reader.getPhoneNumber(),
+            reader.getExpiry(),
+            reader.isLock()
+        );
+
+        add(newReader);
+    }
+
+    /**
+     * Cập nhật thông tin độc giả
+     * @param id ID của độc giả cần cập nhật
+     * @param fieldsToUpdate Map chứa các trường cần cập nhật
+     */
     @Override
-public void update(String id, Map<String, Object> fieldsToUpdate) throws Exception {
-    // 1. Tìm đối tượng gốc cần cập nhật
-    int index = findIndexById(id);
-    if (index == -1) {
-        throw new Exception("Lỗi: Không tìm thấy độc giả để cập nhật!");
+    public void update(String id, Map<String, Object> fieldsToUpdate) throws Exception {
+        int index = findIndexById(id);
+        if (index == -1) {
+            throw new Exception("Không tìm thấy độc giả để cập nhật!");
+        }
+        
+        Reader existingReader = readers.get(index);
+        
+        // Cập nhật từng trường thông tin
+        for (Map.Entry<String, Object> entry : fieldsToUpdate.entrySet()) {
+            String fieldName = entry.getKey();
+            Object value = entry.getValue();
+            
+            switch (fieldName) {
+                case "nameReader":
+                    String newName = (String) value;
+                    if (newName == null || newName.trim().isEmpty()) {
+                        throw new Exception("Tên độc giả không được để trống.");
+                    }
+                    existingReader.setNameReader(newName);
+                    break;
+                    
+                case "addressReader":
+                    existingReader.setAddressReader((String) value);
+                    break;
+                    
+                case "emailReader":
+                    String newEmail = (String) value;
+                    if (!newEmail.isEmpty() && !emailValidator.validate(newEmail)) {
+                        throw new Exception("Email không hợp lệ.");
+                    }
+                    existingReader.setEmailReader(newEmail);
+                    break;
+                    
+                case "phoneNumber":
+                    String newPhone = (String) value;
+                    if (!newPhone.isEmpty() && !phoneValidator.validate(newPhone)) {
+                        throw new Exception("Số điện thoại không hợp lệ.");
+                    }
+                    existingReader.setPhoneNumber(newPhone);
+                    break;
+                case "expiry":
+                    existingReader.setExpiry((LocalDateTime) value);
+                    break;
+                    
+                case "lock":
+                    existingReader.setLock((Boolean) value);
+                    break;
+                default:
+                    System.out.println("Cảnh báo: Trường '" + fieldName + "' không hợp lệ.");
+                    break;
+            }
+        }
+        
+        FileReaderCSV.writeFile(readers);
     }
-    Reader existingReader = readers.get(index);
 
-    // 2. Duyệt qua "túi" dữ liệu và cập nhật từng trường một
-    for (Map.Entry<String, Object> entry : fieldsToUpdate.entrySet()) {
-        String fieldName = entry.getKey();
-        Object value = entry.getValue();
-
-        // Dùng switch-case để xử lý từng trường hợp
-        switch (fieldName) {
-            case "nameReader":
-                String newName = (String) value;
-                if (newName == null || newName.trim().isEmpty()) { // Kiểm tra nếu tên độc giả không hợp lệ
-                    throw new Exception("Tên độc giả không được để trống.");
-                }
-                existingReader.setNameReader(newName);  // Cập nhật tên độc giả
-                break;
-            case "addressReader":
-                existingReader.setAddressReader((String) value);  // Cập nhật địa chỉ độc giả
-                break;
-            case "emailReader":
-                String newEmail = (String) value;
-                if (!newEmail.isEmpty() && !EmailValidate.isValid(newEmail)) {  // Kiểm tra nếu email không hợp lệ
-                    throw new Exception("Địa chỉ email không hợp lệ.");
-                }
-                existingReader.setEmailReader(newEmail);   // Cập nhật email độc giả
-                break;
-            case "phoneNumber":
-                existingReader.setPhoneNumber((String) value);  // Cập nhật số điện thoại độc giả
-                break;
-            default:
-                // Có thể bỏ qua các trường không xác định hoặc ném lỗi
-                System.out.println("Cảnh báo: Trường không xác định '" + fieldName + "' bị bỏ qua.");
-                break;
+    /**
+     * Xóa độc giả khỏi hệ thống
+     * @param id ID của độc giả cần xóa
+     */
+    @Override
+    public void delete(String id) {
+        int index = findIndexById(id);
+        if (index != -1) {
+            readers.remove(index);
+            FileReaderCSV.writeFile(readers);
         }
     }
 
-    // 3. Lưu lại sau khi đã cập nhật xong
-    FileReaderCSV.writeFile(readers);
-    }
-
+    /**
+     * Tìm vị trí của độc giả trong danh sách theo ID
+     * @param id ID cần tìm
+     * @return vị trí trong danh sách, -1 nếu không tìm thấy
+     */
     @Override
-    public void delete(String id) {
-    readers.remove(findIndexById(id)); // Xóa độc giả theo ID
-    FileReaderCSV.writeFile(readers);
-    }
-
-    @Override
-    public int findIndexById(String id) {  // Tìm kiếm vị trí của độc giả theo ID
+    public int findIndexById(String id) {
         for (int i = 0; i < readers.size(); i++) {
             if (readers.get(i).getIdReader().equals(id)) {
                 return i;
@@ -92,95 +160,84 @@ public void update(String id, Map<String, Object> fieldsToUpdate) throws Excepti
         return -1;
     }
 
-    
-    public List<Reader> findReaderByIdOrName(String inp) { 
-        List<Reader> listFind = new ArrayList<>();
+    /**
+     * Tìm kiếm độc giả theo ID hoặc tên
+     * @param input Chuỗi tìm kiếm
+     * @return Danh sách độc giả phù hợp
+     */
+    public List<Reader> findReaderByIdOrName(String input) {
+        List<Reader> foundReaders = new ArrayList<>();
         for (Reader reader : readers) {
-            if (String.valueOf(reader.getIdReader()).contains(inp) || reader.getNameReader().contains(inp)) {
-                listFind.add(reader);
+            if (reader.getIdReader().contains(input) || 
+                reader.getNameReader().toLowerCase().contains(input.toLowerCase())) {
+                foundReaders.add(reader);
             }
         }
-        return listFind;
+        return foundReaders;
     }
 
-
-    public static void autoSetLock() { // Tự động thiết lập trạng thái khóa cho các độc giả
-        LocalDateTime localDateTime = LocalDateTime.now();
+    /**
+     * Tự động khóa tài khoản độc giả hết hạn
+     */
+    public static void autoSetLock() {
+        LocalDateTime now = LocalDateTime.now();
+        boolean hasChanges = false;
+        
         for (Reader reader : readers) {
-            if (reader.getExpiry() != null && !reader.getExpiry().isAfter(localDateTime)) {
-    reader.setLock(true);
-}
+            if (reader.getExpiry() != null && !reader.getExpiry().isAfter(now)) {
+                reader.setLock(true);
+                hasChanges = true;
+            }
         }
-        FileReaderCSV.writeFile(readers); // Ghi lại danh sách độc giả vào file CSV sau khi cập nhật trạng thái khóa
-    }
-    
-        public void extendExpiry(String id, Reader reader) {  // Gia hạn ngày hết hạn thẻ mượn sách cho độc giả
-//        readers.set(findIndexById(id), reader);
-        readers.get(findIndexById(id)).setExpiry(reader.getExpiry());
-        readers.get(findIndexById(id)).setLock(false);
-        FileReaderCSV.writeFile(readers);
+        
+        // Chỉ lưu file khi có sự thay đổi
+        if (hasChanges) {
+            FileReaderCSV.writeFile(readers);
+        }
     }
 
-    public List<String> getListId() {  // Lấy danh sách ID của tất cả độc giả
-        List<String> list = new ArrayList<>();
-        for (Reader reader: readers) {
-            list.add(reader.getIdReader());
+    /**
+     * Gia hạn thẻ độc giả
+     * @param id ID của độc giả cần gia hạn
+     * @param reader Thông tin gia hạn
+     */
+    public void extendExpiry(String id, Reader reader) {
+        int index = findIndexById(id);
+        if (index != -1) {
+            Reader existingReader = readers.get(index);
+            existingReader.setExpiry(reader.getExpiry());
+            existingReader.setLock(false);
+            FileReaderCSV.writeFile(readers);
         }
-        return list;
     }
 
+    /**
+     * Lấy danh sách tất cả ID độc giả
+     */
+    public List<String> getListId() {
+        List<String> ids = new ArrayList<>();
+        for (Reader reader : readers) {
+            ids.add(reader.getIdReader());
+        }
+        return ids;
+    }
+
+    /**
+     * Lấy danh sách tất cả độc giả
+     */
     public List<Reader> getAllReaders() {
         return new ArrayList<>(readers);
     }
 
     /**
-     * Wrapper cho add(Reader). Giữ tên addReader để tương thích.
-     */
-    public void addReader(Reader reader) {
-        add(reader); // sử dụng method add hiện có, method này đã writeFile
-    }
-
-    /**
-     * Cập nhật một Reader theo object đầy đủ.
-     * Nếu không tìm thấy id tương ứng thì không làm gì.
-     * (Không thay đổi id, vì model không có setIdReader())
-     */
-    public void updateReader(Reader reader) {
-        int idx = findIndexById(reader.getIdReader());
-        if (idx == -1) {
-            // không tìm thấy -> không làm gì hoặc bạn có thể ném Exception tuỳ ý
-            System.out.println("Warning: updateReader -> Reader id not found: " + reader.getIdReader());
-            return;
-        }
-
-        Reader existing = readers.get(idx);
-        // Cập nhật từng trường (theo model của bạn)
-        existing.setNameReader(reader.getNameReader());
-        existing.setAddressReader(reader.getAddressReader());
-        existing.setEmailReader(reader.getEmailReader());
-        existing.setPhoneNumber(reader.getPhoneNumber());
-        existing.setExpiry(reader.getExpiry());
-        existing.setLock(reader.isLock());
-
-        // Lưu vào file
-        FileReaderCSV.writeFile(readers);
-    }
-
-    /**
-     * Xóa độc giả theo id — tên method tương thích với deleteReader gọi từ Controller.
-     */
-    public void deleteReader(String id) {
-        // Sử dụng method delete hiện có (delete expects id)
-        delete(id);
-    }
-
-    /**
-     * Lấy Reader theo id (trả null nếu không tồn tại).
+     * Lấy thông tin độc giả theo ID
+     * @param id ID cần tìm
+     * @return Đối tượng Reader, null nếu không tìm thấy
      */
     public Reader getReaderById(String id) {
-        int idx = findIndexById(id);
-        return (idx == -1) ? null : readers.get(idx);
+        int index = findIndexById(id);
+        return index != -1 ? readers.get(index) : null;
     }
+
+
 }
-
-

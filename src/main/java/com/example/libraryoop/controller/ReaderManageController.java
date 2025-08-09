@@ -5,7 +5,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.example.libraryoop.service.ReaderManagementService;
+import com.example.libraryoop.util.IdGenerator;
 import com.example.libraryoop.model.Reader;
+import com.example.libraryoop.validate.EmailValidate;
+import com.example.libraryoop.validate.PhoneNumberValidate;
 
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -24,32 +27,65 @@ import javafx.scene.control.cell.CheckBoxTableCell;
 public class ReaderManageController {
 
     // Table + columns
-    @FXML private TableView<Reader> tableReaders;
-    @FXML private TableColumn<Reader, String> colId;
-    @FXML private TableColumn<Reader, String> colName;
-    @FXML private TableColumn<Reader, String> colAddress;
-    @FXML private TableColumn<Reader, String> colEmail;
-    @FXML private TableColumn<Reader, String> colPhone;
-    @FXML private TableColumn<Reader, String> colExpiry;
-    @FXML private TableColumn<Reader, Boolean> colLock;
+    @FXML
+    private TableView<Reader> tableReaders;
+    @FXML
+    private TableColumn<Reader, String> colId;
+    @FXML
+    private TableColumn<Reader, String> colName;
+    @FXML
+    private TableColumn<Reader, String> colAddress;
+    @FXML
+    private TableColumn<Reader, String> colEmail;
+    @FXML
+    private TableColumn<Reader, String> colPhone;
+    @FXML
+    private TableColumn<Reader, String> colExpiry;
+    @FXML
+    private TableColumn<Reader, Boolean> colLock;
 
     // Form fields
-    @FXML private TextField txtId;
-    @FXML private TextField txtName;
-    @FXML private TextField txtAddress;
-    @FXML private TextField txtEmail;
-    @FXML private TextField txtPhone;
-    @FXML private DatePicker dpExpiry;
-    @FXML private CheckBox chkLock;
+    @FXML
+    private TextField txtId;
+    @FXML
+    private TextField txtName;
+    @FXML
+    private TextField txtAddress;
+    @FXML
+    private TextField txtEmail;
+    @FXML
+    private TextField txtPhone;
+    @FXML
+    private DatePicker dpExpiry;
+    @FXML
+    private CheckBox chkLock;
 
     // Buttons
-    @FXML private Button btnAdd;
-    @FXML private Button btnUpdate;
-    @FXML private Button btnDelete;
-    @FXML private Button btnClear;
+    @FXML
+    private Button btnAdd;
+    @FXML
+    private Button btnUpdate;
+    @FXML
+    private Button btnDelete;
+    @FXML
+    private Button btnClear;
 
     private final ReaderManagementService readerService = new ReaderManagementService();
     private final ObservableList<Reader> readerList = FXCollections.observableArrayList();
+    private final PhoneNumberValidate phoneValidator = new PhoneNumberValidate();
+    private final EmailValidate emailValidator = new EmailValidate();
+    /**
+     * Tạo và hiển thị ID mới cho độc giả
+     */
+    private void generateAndShowNewId() {
+        String newId;
+        do {
+            newId = IdGenerator.generateId("R");
+        } while (readerService.getReaderById(newId) != null);
+
+        txtId.setText(newId);
+        txtId.setDisable(true);
+    }
 
     @FXML
     public void initialize() {
@@ -73,7 +109,10 @@ public class ReaderManageController {
         btnAdd.setOnAction(e -> handleAdd());
         btnUpdate.setOnAction(e -> handleUpdate());
         btnDelete.setOnAction(e -> handleDelete());
-        btnClear.setOnAction(e -> handleClear());
+        generateAndShowNewId();
+        btnClear.setOnAction(e -> {handleClear();
+        generateAndShowNewId();
+        });
 
         refreshTable();
     }
@@ -105,34 +144,43 @@ public class ReaderManageController {
 
     @FXML
     private void handleAdd() {
-        if (txtId.getText().isBlank() || txtName.getText().isBlank()) {
-            showAlert("Thiếu thông tin", "ID và Name là bắt buộc.");
+        if (txtName.getText().isBlank()) {
+            showAlert("Thiếu thông tin", "Tên độc giả là bắt buộc.");
             return;
         }
-        if (!isValidEmail(txtEmail.getText().trim())) {
+        
+        // Validate email using EmailValidate class
+        String email = txtEmail.getText().trim();
+        if (!email.isEmpty() && !emailValidator.validate(email)) {
             showAlert("Lỗi", "Email không hợp lệ.");
             return;
         }
-        LocalDateTime expiry = (dpExpiry == null || dpExpiry.getValue() == null)
-                ? null
-                : dpExpiry.getValue().atStartOfDay();
-        Reader r = new Reader(
-                txtId.getText().trim(),
+
+        // Validate phone number
+        String phone = txtPhone.getText().trim();
+        if (!phone.isEmpty() && !phoneValidator.validate(phone)) {
+            showAlert("Lỗi", "Số điện thoại không hợp lệ.");
+            return;
+        }
+
+
+        Reader newReader = new Reader(
+                txtId.getText(), // Sử dụng ID đã được tạo sẵn
                 txtName.getText().trim(),
                 txtAddress.getText().trim(),
                 txtEmail.getText().trim(),
                 txtPhone.getText().trim(),
                 dpExpiry.getValue() == null ? null : dpExpiry.getValue().atStartOfDay(),
-                chkLock.isSelected()
-        );
+                chkLock.isSelected());
 
         try {
-            readerService.add(r);
+            readerService.add(newReader); // Dùng add() thay vì addNewReader()
+            refreshTable();
+            handleClear();
+            generateAndShowNewId(); // Tạo ID mới sau khi thêm thành công
         } catch (Exception ex) {
             showAlert("Lỗi", "Không thể thêm độc giả: " + ex.getMessage());
         }
-        refreshTable();
-        handleClear();
     }
 
     @FXML
@@ -191,8 +239,9 @@ public class ReaderManageController {
         txtPhone.clear();
         dpExpiry.setValue(null);
         chkLock.setSelected(false);
-        txtId.setDisable(false);
+        // Không cần setDisable(false) cho txtId nữa vì nó luôn bị disable
         tableReaders.getSelectionModel().clearSelection();
+        generateAndShowNewId(); // Tạo ID mới sau khi clear form
     }
 
     private void showAlert(String title, String content) {
@@ -201,10 +250,5 @@ public class ReaderManageController {
         a.setHeaderText(null);
         a.setContentText(content);
         a.showAndWait();
-    }
-
-    // Simple email validation method
-    private boolean isValidEmail(String email) {
-        return email != null && email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$");
     }
 }
