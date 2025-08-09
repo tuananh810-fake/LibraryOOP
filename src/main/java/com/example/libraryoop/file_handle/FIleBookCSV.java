@@ -12,7 +12,7 @@ import com.example.libraryoop.model.Book;
 
 public class FileBookCSV {
 
-    private static final String CSV_FILE_PATH = "src/main/java/com/example/libraryoop/database/BookData.csv";
+    private static final String CSV_FILE_PATH = "data/BookData.csv";
 
     public static List<Book> readBooksFromCSV() {
         List<Book> books = new ArrayList<>();
