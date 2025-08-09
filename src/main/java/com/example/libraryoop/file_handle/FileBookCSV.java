@@ -10,7 +10,7 @@ import java.util.List;
 import com.example.libraryoop.model.Book;
 
 
-public class FileBookCSV {  //hihi
+public class FileBookCSV {
 
     private static final String CSV_FILE_PATH = "data/BookData.csv";
 
@@ -33,7 +33,7 @@ public class FileBookCSV {  //hihi
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Error reading books from CSV", e);
         }
         return books;
     }
@@ -42,7 +42,7 @@ public class FileBookCSV {  //hihi
         try (java.io.FileWriter writer = new java.io.FileWriter(CSV_FILE_PATH, true)) {
             writer.append(book.toCSV());
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Error writing book to CSV", e);
         }
     }
 
@@ -52,7 +52,7 @@ public class FileBookCSV {  //hihi
                 writer.write(book.toCSV());
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Error overwriting books to CSV", e);
         }
     }
 }

@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.example.libraryoop.file_handle.FileBookCSV;
 import com.example.libraryoop.model.Book;
+import com.example.libraryoop.util.IdGenerator;
 
 
 public class BookManagementService {
@@ -33,7 +34,7 @@ public class BookManagementService {
 
     public void addBook(String idBook, String nameBook, String author, String category, String publishingCompany, Year publishingYear, int numberOfBooks) {
         Book newBook = new Book(idBook, nameBook, author, category, publishingCompany, publishingYear, numberOfBooks);
-        idBook = java.util.UUID.randomUUID().toString();
+        idBook = IdGenerator.generateId("B");
         newBook.setIdBook(idBook);
         bookCatalog.add(newBook);
         FileBookCSV.writeBookToCSV(newBook);
