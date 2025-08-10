@@ -1,0 +1,4 @@
+ID || NAME || ADDRESS || EMAIL || PHONENUMBER || ROLE || USERNAME || PASSWORD
+S001 || Nguyen Van A || Ha Noi || a@example.com || 0123456789 || admin || ad || 123
+S002 || Tran Thi B || Ho Chi Minh || b@example.com || 0987654321 || staff || staff1 || abc
+S003 || Le Van C || Da Nang || c@example.com || 0912345678 || staff || staff2 || pass123
