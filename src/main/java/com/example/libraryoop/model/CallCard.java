@@ -17,9 +17,9 @@ public class CallCard {
     /**
      * Constructor with parameters.
      */
-    public CallCard(String idCallCard, Reader reader, LocalDateTime bookLoanDay) {
+    public CallCard(String idCallCard, Reader reader2, LocalDateTime bookLoanDay) {
         this.idCallCard = idCallCard;
-        this.reader = reader;
+        this.reader = reader2;
         // this.staff = staff;
         this.bookLoanDay = bookLoanDay;
     }

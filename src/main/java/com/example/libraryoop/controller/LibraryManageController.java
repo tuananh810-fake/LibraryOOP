@@ -2,6 +2,8 @@ package com.example.libraryoop.controller;
 
 import com.example.libraryoop.service.BookManagementService;
 import com.example.libraryoop.model.Book;
+import com.example.libraryoop.util.IdGenerator;  
+
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -60,16 +62,20 @@ public class LibraryManageController {
 
         // handlers (requires fx:id in FXML)
         btnAddBook.setOnAction(e -> handleAddBook());
-        btnUpdateBook.setOnAction(e -> handleUpdateBook());
+        btnUpdateBook.setOnAction(e -> handleDeleteBook());
         btnDeleteBook.setOnAction(e -> handleDeleteBook());
-        btnClearBook.setOnAction(e -> clearFormBook());
+        generateAndShowNewId();
+        btnClearBook.setOnAction(e -> {clearFormBook();
+        generateAndShowNewId();
+        });
+        txtId.setDisable(true);
 
         refreshTableBook();
     }
 
     private void fillForm(Book b) {
         if (b == null) { clearFormBook(); return; }
-        txtId.setText(b.getIdBook()); txtId.setDisable(true);
+        txtId.setDisable(true); // khóa id khi edit (model không có setIdReader)
         txtName.setText(b.getNameBook());
         txtAuthor.setText(b.getAuthor());
         txtCategory.setText(b.getCategory());
@@ -83,15 +89,26 @@ public class LibraryManageController {
     }
 
     private void handleAddBook() {
-        if (txtId.getText().isBlank() || txtName.getText().isBlank()) {
-            showAlert("Thiếu thông tin", "ID và Tên sách là bắt buộc.");
+        if ( txtName.getText().isBlank()) {
+            showAlert("Thiếu thông tin", "Tên sách là bắt buộc.");
             return;
         }
+        // Validate Year
         Year year = parseYearOrNull(txtYear.getText().trim());
+        if (year == null && !txtYear.getText().trim().isEmpty()) {
+            showAlert("Lỗi", "Năm xuất bản không hợp lệ. Vui lòng nhập số nguyên.");
+            return;
+        }
+
+        // Validate Number of Books
         int number = parseIntOrZero(txtNumber.getText().trim());
+        if (number == 0 && !txtNumber.getText().trim().isEmpty()) {
+            showAlert("Lỗi", "Số lượng sách không hợp lệ. Vui lòng nhập số nguyên dương.");
+            return;
+        }
 
         Book b = new Book(
-                txtId.getText().trim(),
+                txtId.getText(),  // sử dụng id được tạo sẵn
                 txtName.getText().trim(),
                 txtAuthor.getText().trim(),
                 txtCategory.getText().trim(),
@@ -135,8 +152,15 @@ public class LibraryManageController {
     }
 
     private void clearFormBook() {
-        txtId.clear(); txtName.clear(); txtAuthor.clear(); txtCategory.clear(); txtPublisher.clear(); txtYear.clear(); txtNumber.clear();
-        txtId.setDisable(false);
+        txtId.clear();
+        txtName.clear(); 
+        txtAuthor.clear(); 
+        txtCategory.clear(); 
+        txtPublisher.clear(); 
+        txtYear.clear(); 
+        txtNumber.clear();
+        // txtId.setDisable(false); id luôn bị khóa
+        generateAndShowNewId(); // Tạo ID mới khi clear form
         tableBooks.getSelectionModel().clearSelection();
     }
 
@@ -157,5 +181,14 @@ public class LibraryManageController {
         a.setHeaderText(null);
         a.setContentText(content);
         a.showAndWait();
+    }
+
+    private void generateAndShowNewId() {
+        String newId;
+        do {
+            newId = IdGenerator.generateId("B"); // Use "B" prefix for books
+        } while (bookService.getBookById(newId) != null);  // Assuming you have getBookById in your service
+
+        txtId.setText(newId);
     }
 }

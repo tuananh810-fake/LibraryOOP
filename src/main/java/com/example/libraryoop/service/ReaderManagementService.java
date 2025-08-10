@@ -231,11 +231,11 @@ public class ReaderManagementService implements IManagement<Reader> {
 
     /**
      * Lấy thông tin độc giả theo ID
-     * @param id ID cần tìm
+     * @param readerId ID cần tìm
      * @return Đối tượng Reader, null nếu không tìm thấy
      */
-    public Reader getReaderById(String id) {
-        int index = findIndexById(id);
+    public Reader getReaderById(String readerId) {
+        int index = findIndexById(readerId);
         return index != -1 ? readers.get(index) : null;
     }
 

@@ -1,20 +1,23 @@
 package com.example.libraryoop.util;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.util.Random;
 
 public class IdGenerator {
-    private static final DateTimeFormatter ID_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS");
+    private static final int ID_LENGTH = 8; // Độ dài phần số ngẫu nhiên (có thể điều chỉnh)
+    private static final Random random = new Random();
 
     private IdGenerator() {
         // Private constructor to prevent instantiation
     }
 
     public static String generateId(String prefix) {
-         if (prefix == null) {
-            prefix = ""; // Đảm bảo an toàn, không gây NullPointerException
+        if (prefix == null) {
+            prefix = "";
         }
-        return prefix.toUpperCase() + LocalDateTime.now().format(ID_FORMATTER);
+        StringBuilder sb = new StringBuilder(prefix.toUpperCase());
+        for (int i = 0; i < ID_LENGTH; i++) {
+            sb.append(random.nextInt(10)); // Thêm số ngẫu nhiên từ 0-9
+        }
+        return sb.toString();
     }
-} 
-
+}

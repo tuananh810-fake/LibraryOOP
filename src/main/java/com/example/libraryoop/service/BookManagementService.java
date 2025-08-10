@@ -23,26 +23,27 @@ public class BookManagementService {
      * Giữ lại method cũ (cũng có thể dùng), nhưng thêm overload nhận Book.
      * Nếu book.id rỗng -> tự tạo id.
      */
-    public void addBook(String idBook, String nameBook, String author, String category, String publishingCompany, Year publishingYear, int numberOfBooks) {
-        Book newBook = new Book(idBook, nameBook, author, category, publishingCompany, publishingYear, numberOfBooks);
-        idBook = IdGenerator.generateId("B");
-        newBook.setIdBook(idBook);
-        bookCatalog.add(newBook);
-        FileBookCSV.writeBookToCSV(newBook);
-        System.out.println("Book added: " + nameBook + " by " + author);
-    }
+//    public void addBook(String idBook, String nameBook, String author, String category, String publishingCompany, Year publishingYear, int numberOfBooks) {
+//        Book newBook = new Book(idBook, nameBook, author, category, publishingCompany, publishingYear, numberOfBooks);
+//        idBook = IdGenerator.generateId("B");
+//        newBook.setIdBook(idBook);
+//        bookCatalog.add(newBook);
+//        FileBookCSV.writeBookToCSV(newBook);
+//        System.out.println("Book added: " + nameBook + " by " + author);
+//    }
 
     /** MỚI: cho controller truyền nguyên Book object */
-    public void addBook(Book book) {
-        if (book == null) return;
-        if (book.getIdBook() == null || book.getIdBook().isBlank()) {
-            book.setIdBook(IdGenerator.generateId("B"));
-        }
-        bookCatalog.add(book);
-        FileBookCSV.writeBookToCSV(book);
+     public void addBook(Book book) {
+        // Tạo Id  dựa trên prefix "B"
+        String idBook;
+        do {
+            idBook = IdGenerator.generateId("B"); 
+        } while (getBookById(idBook) != null); // đảm bảo id là duy nhất
+        book.setIdBook(idBook); // Set id cho book
+        bookCatalog.add(book); // Thêm vào List
+        FileBookCSV.writeBookToCSV(book); // viết vào file CSV
         System.out.println("Book added: " + book.getNameBook() + " by " + book.getAuthor());
     }
-
     public void removeBook(String idBook) {
         bookCatalog.removeIf(book -> book.getIdBook().equals(idBook));
         FileBookCSV.overwriteBooksToCSV(bookCatalog);
@@ -154,8 +155,12 @@ public class BookManagementService {
     }
 
     /** Tên chuẩn: getBookById */
-    public Book getBookById(String id) {
-        for (Book book : bookCatalog) if (book.getIdBook().equals(id)) return book;
+    public Book getBookById(String idBook) {
+        for (Book book : bookCatalog) {
+            if (book.getIdBook().equals(idBook)) {
+                return book;
+            }
+        }
         return null;
     }
 }
