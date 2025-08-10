@@ -239,5 +239,10 @@ public class ReaderManagementService implements IManagement<Reader> {
         return index != -1 ? readers.get(index) : null;
     }
 
+    public static Reader getCallCardById(String readerId) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getCallCardById'");
+    }
+
 
 }
