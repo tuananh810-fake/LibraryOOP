@@ -4,9 +4,9 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.example.libraryoop.model.Reader;
 import com.example.libraryoop.service.ReaderManagementService;
 import com.example.libraryoop.util.IdGenerator;
-import com.example.libraryoop.model.Reader;
 import com.example.libraryoop.validate.EmailValidate;
 import com.example.libraryoop.validate.PhoneNumberValidate;
 

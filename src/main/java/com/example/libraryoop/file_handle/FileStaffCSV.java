@@ -18,7 +18,7 @@ public class FileStaffCSV {
     private static final Path EXTERNAL_PATH = Paths.get("data", "StaffData.csv");
     private static final String HEADER = "ID || NAME || ADDRESS || EMAIL || PHONENUMBER || ROLE || USERNAME || PASSWORD";
 
-    public void writeStaffFile(List<Staff> staffs) {
+    public static void writeStaffFile(List<Staff> staffs) {
         try {
             // tạo folder nếu chưa tồn tại
             if (Files.notExists(EXTERNAL_PATH.getParent())) {
@@ -83,7 +83,7 @@ public class FileStaffCSV {
                     
                     if (line.isEmpty()) continue;
 
-                    String[] parts = line.split (" \\|\\| ");
+                    String[] parts = line.split ("\\|\\|", -1);
 
                     if (parts.length < 8) {
                         System.err.println("Invalid format: " + line);
