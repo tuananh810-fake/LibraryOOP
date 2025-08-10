@@ -7,7 +7,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringJoiner;
@@ -18,7 +18,7 @@ public class FileStaffCSV {
     private static final Path EXTERNAL_PATH = Paths.get("data", "StaffData.csv");
     private static final String HEADER = "ID || NAME || ADDRESS || EMAIL || PHONENUMBER || ROLE || USERNAME || PASSWORD";
 
-    public void writeStaffFile(List<Staff> staffs) {
+    public static void writeStaffFile(List<Staff> staffs) {
         try {
             // tạo folder nếu chưa tồn tại
             if (Files.notExists(EXTERNAL_PATH.getParent())) {
