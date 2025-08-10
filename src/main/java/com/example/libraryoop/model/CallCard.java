@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 public class CallCard {
     private String idCallCard; // id thẻ mượn sách
     private Reader reader;  // Thông tin người mượn sách
-    private Staff staff;  // Nhân viên quản lý
+    // private Staff staff;  // Nhân viên quản lý thẻ mượn sách
     private LocalDateTime bookLoanDay;  // Ngày mượn sách
 
     /**
@@ -17,10 +17,10 @@ public class CallCard {
     /**
      * Constructor with parameters.
      */
-    public CallCard(String idCallCard, Reader reader, Staff staff, LocalDateTime bookLoanDay) {
+    public CallCard(String idCallCard, Reader reader, LocalDateTime bookLoanDay) {
         this.idCallCard = idCallCard;
         this.reader = reader;
-        this.staff = staff;
+        // this.staff = staff;
         this.bookLoanDay = bookLoanDay;
     }
 
@@ -44,13 +44,13 @@ public class CallCard {
         this.reader = reader;
     }
 
-    public Staff getStaff() {
-        return staff;
-    }
+    // public Staff getStaff() {
+    //     return staff;
+    // }
 
-    public void setStaff(Staff staff) {
-        this.staff = staff;
-    }
+    // public void setStaff(Staff staff) {
+    //     this.staff = staff;
+    // }
 
     public LocalDateTime getBookLoanDay() {
         return bookLoanDay;
