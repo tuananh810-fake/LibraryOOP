@@ -51,8 +51,14 @@ public class CallCardManagementService {
             BorrowCard borrowCard = iterator.next();
 
             if (borrowCard.getIdCallCard().equals(id)) {
-                String bookId = borrowCard.getBook().getIdBook();
+                if (borrowCard.getBook() == null) {
+                    throw new IllegalArgumentException("The muon khong co thong tin sach" + id);
+                }
 
+                int quantity = boorrowCard.getQuantity();
+                int numberOfBooks = boorrowCard.getBook().getNumberOfBooks();
+                numberOfBooks -= quantity;
+                boorrowCard.getBook().setNumberOfBooks();
                 
                 iterator.remove();
 
