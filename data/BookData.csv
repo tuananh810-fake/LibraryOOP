@@ -1,4 +1,51 @@
 ID,NAME,AUTHOR,CATEGORY,PUBLISHER,YEAR,NUMBER
-B21533013,đd,ddd,dd,dd,,0
-B80428340,hdhdddd,d,danh,dd,1223,12
-B84081244,jh,d,danh,dd,1223,12
+B001,The Great Gatsby,F. Scott Fitzgerald,Fiction,Charles Scribner's Sons,1925,5
+B002,To Kill a Mockingbird,Harper Lee,Fiction,J.B. Lippincott & Co.,1960,3
+B003,1984,George Orwell,Dystopian,Secker & Warburg,1949,7
+B004,The Catcher in the Rye,J.D. Salinger,Fiction,Little, Brown and Company,1951,4
+B005,The Hobbit,J.R.R. Tolkien,Fantasy,George Allen & Unwin,1937,6
+B006,Harry Potter and the Sorcerer's Stone,J.K. Rowling,Fantasy,Bloomsbury,1997,10
+B007,The Da Vinci Code,Dan Brown,Thriller,Doubleday,2003,8
+B008,Pride and Prejudice,Jane Austen,Romance,T. Egerton,1813,2
+B009,The Alchemist,Paulo Coelho,Fiction,HarperTorch,1988,9
+B010,The Lord of the Rings,J.R.R. Tolkien,Fantasy,George Allen & Unwin,1954,5
+B011,Brave New World,Aldous Huxley,Dystopian,Chatto & Windus,1932,4
+B012,The Hunger Games,Suzanne Collins,Dystopian,Scholastic Press,2008,12
+B013,Catching Fire,Suzanne Collins,Dystopian,Scholastic Press,2009,11
+B014,Mockingjay,Suzanne Collins,Dystopian,Scholastic Press,2010,10
+B015,The Fault in Our Stars,John Green,Romance,Dutton Books,2012,7
+B016,Looking for Alaska,John Green,Romance,Dutton Books,2005,6
+B017,Paper Towns,John Green,Romance,Dutton Books,2008,5
+B018,The Martian,Andy Weir,Science Fiction,Crown Publishing,2011,8
+B019,Dune,Frank Herbert,Science Fiction,Chilton Books,1965,4
+B020,Foundation,Isaac Asimov,Science Fiction,Gnome Press,1951,3
+B021,Neuromancer,William Gibson,Cyberpunk,Ace Books,1984,2
+B022,Snow Crash,Neal Stephenson,Cyberpunk,Bantam Books,1992,3
+B023,The Left Hand of Darkness,Ursula K. Le Guin,Science Fiction,Ace Books,1969,4
+B024,The Dispossessed,Ursula K. Le Guin,Science Fiction,Harper & Row,1974,4
+B025,A Game of Thrones,George R.R. Martin,Fantasy,Bantam Spectra,1996,9
+B026,A Clash of Kings,George R.R. Martin,Fantasy,Bantam Spectra,1998,8
+B027,A Storm of Swords,George R.R. Martin,Fantasy,Bantam Spectra,2000,8
+B028,A Feast for Crows,George R.R. Martin,Fantasy,Bantam Spectra,2005,7
+B029,A Dance with Dragons,George R.R. Martin,Fantasy,Bantam Spectra,2011,6
+B030,The Name of the Wind,Patrick Rothfuss,Fantasy,DAW Books,2007,5
+B031,The Wise Man's Fear,Patrick Rothfuss,Fantasy,DAW Books,2011,5
+B032,American Gods,Neil Gaiman,Fantasy,William Morrow,2001,6
+B033,Good Omens,Neil Gaiman; Terry Pratchett,Fantasy,Gollancz,1990,4
+B034,Neverwhere,Neil Gaiman,Fantasy,BBC Books,1996,3
+B035,Coraline,Neil Gaiman,Fantasy,Bloomsbury,2002,4
+B036,The Graveyard Book,Neil Gaiman,Fantasy,HarperCollins,2008,5
+B037,The Kite Runner,Khaled Hosseini,Fiction,Riverhead Books,2003,6
+B038,A Thousand Splendid Suns,Khaled Hosseini,Fiction,Riverhead Books,2007,6
+B039,And the Mountains Echoed,Khaled Hosseini,Fiction,Riverhead Books,2013,5
+B040,Sapiens,Yuval Noah Harari,History,Harvill Secker,2011,7
+B041,Homo Deus,Yuval Noah Harari,History,Harvill Secker,2015,6
+B042,21 Lessons for the 21st Century,Yuval Noah Harari,History,Harvill Secker,2018,6
+B043,Educated,Tara Westover,Biography,Random House,2018,4
+B044,Becoming,Michelle Obama,Biography,Crown Publishing,2018,5
+B045,Steve Jobs,Walter Isaacson,Biography,Simon & Schuster,2011,4
+B046,Elon Musk,Ashlee Vance,Biography,HarperCollins,2015,5
+B047,The Lean Startup,Eric Ries,Business,Crown Publishing,2011,6
+B048,Zero to One,Peter Thiel,Business,Crown Business,2014,5
+B049,Deep Work,Cal Newport,Self-help,Grand Central Publishing,2016,4
+B050,Atomic Habits,James Clear,Self-help,Avery,2018,7
