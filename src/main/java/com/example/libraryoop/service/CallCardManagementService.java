@@ -17,9 +17,11 @@ public class CallCardManagementService {
         } 
 
         int quantity = borrowCard.getQuantity();
-        int numberOfBooks = boorrowCard.;
+        int numberOfBooks = borrowCard.getBook().getNumberOfBooks();
+        numberOfBooks -= quantity;
 
-        borrowCard.setQuantity(quantity);
+        borrowCard.getBook().setNumberOfBooks(numberOfBooks);
+
         borrowCardList.add(borrowCard);
         BorrowCardCSV.writeCallCardListToFile(borrowCardList);
     }
@@ -42,7 +44,7 @@ public class CallCardManagementService {
 
     public void deleteByIdCallCard(String id) {
         if (findIndexById(id) == -1) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Không tìm thấy phiếu mượn " + id);
         }
 
         Iterator<BorrowCard> iterator = borrowCardList.iterator();
@@ -52,24 +54,22 @@ public class CallCardManagementService {
 
             if (borrowCard.getIdCallCard().equals(id)) {
                 if (borrowCard.getBook() == null) {
-                    throw new IllegalArgumentException("The muon khong co thong tin sach" + id);
+                    throw new IllegalArgumentException("Phiếu mượn không có thông tin sách");
                 }
 
-                int quantity = boorrowCard.getQuantity();
-                int numberOfBooks = boorrowCard.getBook().getNumberOfBooks();
-                numberOfBooks -= quantity;
-                boorrowCard.getBook().setNumberOfBooks();
+                int quantity = borrowCard.getQuantity();
+                int numberOfBooks = borrowCard.getBook().getNumberOfBooks();
+                numberOfBooks += quantity;
+                
+                borrowCard.getBook().setNumberOfBooks(numberOfBooks);
                 
                 iterator.remove();
-
                 return;
             }
         }
 
         System.err.println("Không tìm thấy");
     }
-
-
 
     public int findIndexById(String id) {
         for (int i = 0; i < borrowCardList.size(); i++) {
