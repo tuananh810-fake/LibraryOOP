@@ -62,7 +62,7 @@ public class LibraryManageController {
 
         // handlers (requires fx:id in FXML)
         btnAddBook.setOnAction(e -> handleAddBook());
-        btnUpdateBook.setOnAction(e -> handleDeleteBook());
+        btnUpdateBook.setOnAction(e -> handleUpdateBook());
         btnDeleteBook.setOnAction(e -> handleDeleteBook());
         generateAndShowNewId();
         btnClearBook.setOnAction(e -> {clearFormBook();

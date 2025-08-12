@@ -31,6 +31,12 @@ public class Book {
         this.numberOfBooks = numberOfBooks;
     }
 
+    public Book(String nameBook, String author, Year publishingYear){
+        this.nameBook=nameBook;
+        this.author=author;
+        this.publishingYear=publishingYear;
+    }
+
     /**
      * Getter and Setter
      */
