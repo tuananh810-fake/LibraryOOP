@@ -11,51 +11,49 @@ import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringJoiner;
-
 import com.example.libraryoop.model.Staff;
 
 public class FileStaffCSV {
 
     private static final Path EXTERNAL_PATH = Paths.get("data", "StaffData.csv");
     private static final String HEADER = "ID || NAME || ADDRESS || EMAIL || PHONENUMBER || ROLE || USERNAME || PASSWORD";
-//    private static final List<Staff> staffList = FileStaffCSV.readStaffFile();
 
-//    public static void writeStaffFile(List<Staff> staffs) {
-//        try {
-//            // tạo folder nếu chưa tồn tại
-//            if (Files.notExists(EXTERNAL_PATH.getParent())) {
-//                Files.createDirectories(EXTERNAL_PATH.getParent());
-//            }
-//            // ghi file (utf-8), xóa nội dung cũ
-//            try (BufferedWriter bw = Files.newBufferedWriter(EXTERNAL_PATH,
-//                    StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
-//
-//                if (Files.size(EXTERNAL_PATH) == 0) {
-//                    bw.write(HEADER);
-//                    bw.newLine();
-//                }
-//
-//                for (Staff staff : staffs) {
-//                    StringJoiner sj = new StringJoiner(" || ");
-//
-//                    sj.add(nullToEmpty(staff.getIdStaff()));
-//                    sj.add(nullToEmpty(staff.getNameStaff()));
-//                    sj.add(nullToEmpty(staff.getAddressStaff()));
-//                    sj.add(nullToEmpty(staff.getEmailStaff()));
-//                    sj.add(nullToEmpty(staff.getNumberPhoneStaff()));
-//                    sj.add(nullToEmpty(staff.getRole()));
-//                    sj.add(nullToEmpty(staff.getUsername()));
-//                    sj.add(nullToEmpty(staff.getPassWord()));
-//
-//                    bw.write(sj.toString());
-//                    bw.newLine();
-//                }
-//            }
-//
-//        } catch (IOException e) {
-//            throw new RuntimeException("Error writing ReaderData.csv: " + e.getMessage(), e);
-//        }
-//    }
+    public static void writeStaffFile(List<Staff> staffs) {
+        try {
+            // tạo folder nếu chưa tồn tại
+            if (Files.notExists(EXTERNAL_PATH.getParent())) {
+                Files.createDirectories(EXTERNAL_PATH.getParent());
+            }
+            // ghi file (utf-8), xóa nội dung cũ
+            try (BufferedWriter bw = Files.newBufferedWriter(EXTERNAL_PATH,
+                    StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
+
+                if (Files.size(EXTERNAL_PATH) == 0) {
+                    bw.write(HEADER);
+                    bw.newLine();
+                }
+            
+                for (Staff staff : staffs) {
+                    StringJoiner sj = new StringJoiner(" || ");
+
+                    sj.add(nullToEmpty(staff.getIdStaff()));
+                    sj.add(nullToEmpty(staff.getNameStaff()));
+                    sj.add(nullToEmpty(staff.getAddressStaff()));
+                    sj.add(nullToEmpty(staff.getEmailStaff()));
+                    sj.add(nullToEmpty(staff.getNumberPhoneStaff()));
+                    sj.add(nullToEmpty(staff.getRole()));
+                    sj.add(nullToEmpty(staff.getUsername()));
+                    sj.add(nullToEmpty(staff.getPassWord()));
+
+                    bw.write(sj.toString());
+                    bw.newLine();
+                }
+            }
+
+        } catch (IOException e) {
+            throw new RuntimeException("Error writing ReaderData.csv: " + e.getMessage(), e);
+        }
+    }
     
     public static List<Staff> readStaffFile() {
         try {
@@ -85,7 +83,7 @@ public class FileStaffCSV {
                     
                     if (line.isEmpty()) continue;
 
-                    String[] parts = line.split("\\s*\\|\\|\\s*", -1);
+                    String[] parts = line.split ("\\|\\|", -1);
 
                     if (parts.length < 8) {
                         System.err.println("Invalid format: " + line);
@@ -114,31 +112,31 @@ public class FileStaffCSV {
         }
     }
 
-//    public void staffLongingIn(String username, String password) {
-//        List<Staff> staffs = readStaffFile();
-//
-//        if (staffs.isEmpty()) {
-//            System.err.println("Please register before log in");
-//        }
-//
-//        for (Staff staff : staffs) {
-//            if (staff.getUsername().equals(username) && staff.getPassWord().equals(password)) {
-//                System.out.println("Đăng nhập thành công");
-//            } else if (staff.getUsername() != username) {
-//                System.err.println("Không tìm thấy tên đăng nhập");
-//            } else if (staff.getPassWord() != password) {
-//                System.err.println("Sai tên đăng nhập hoặc tài khoản");
-//            }
-//        }
-//    }
-//
-//    public void updateStaffAccount() {
-//
-//    }
-//
-//    private static String nullToEmpty(String s) {
-//        return s == null ? "" : s;
-//    }
+    public void staffLongingIn(String username, String password) {
+        List<Staff> staffs = readStaffFile();
+        
+        if (staffs.isEmpty()) {
+            System.err.println("Please register before log in");
+        }
+
+        for (Staff staff : staffs) {
+            if (staff.getUsername() == username && staff.getPassWord() == password) {
+                System.out.println("Đăng nhập thành công");
+            } else if (staff.getUsername() != username) {
+                System.err.println("Không tìm thấy tên đăng nhập");
+            } else if (staff.getPassWord() != password) {
+                System.err.println("Sai tên đăng nhập hoặc tài khoản");
+            }
+        }
+    }
+
+    public void updateStaffAccount() {
+
+    }
+
+    private static String nullToEmpty(String s) {
+        return s == null ? "" : s;
+    }
 
     private static String emptyToNull(String s) {
         return (s == null || s.isEmpty()) ? null : s;
