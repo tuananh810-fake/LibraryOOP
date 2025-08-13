@@ -57,13 +57,13 @@ public class ReaderManagementService implements IManagement<Reader> {
 
         // Tạo reader mới với ID mới được tạo
         Reader newReader = new Reader(
-            newId,
-            reader.getNameReader(),
-            reader.getAddressReader(),
-            reader.getEmailReader(),
-            reader.getPhoneNumber(),
-            reader.getExpiry(),
-            reader.isLock()
+                newId,
+                reader.getNameReader(),
+                reader.getAddressReader(),
+                reader.getEmailReader(),
+                reader.getPhoneNumber(),
+                reader.getExpiry(),
+                reader.isLock()
         );
 
         add(newReader);
@@ -80,14 +80,14 @@ public class ReaderManagementService implements IManagement<Reader> {
         if (index == -1) {
             throw new Exception("Không tìm thấy độc giả để cập nhật!");
         }
-        
+
         Reader existingReader = readers.get(index);
-        
+
         // Cập nhật từng trường thông tin
         for (Map.Entry<String, Object> entry : fieldsToUpdate.entrySet()) {
             String fieldName = entry.getKey();
             Object value = entry.getValue();
-            
+
             switch (fieldName) {
                 case "nameReader":
                     String newName = (String) value;
@@ -96,11 +96,11 @@ public class ReaderManagementService implements IManagement<Reader> {
                     }
                     existingReader.setNameReader(newName);
                     break;
-                    
+
                 case "addressReader":
                     existingReader.setAddressReader((String) value);
                     break;
-                    
+
                 case "emailReader":
                     String newEmail = (String) value;
                     if (!newEmail.isEmpty() && !emailValidator.validate(newEmail)) {
@@ -108,7 +108,7 @@ public class ReaderManagementService implements IManagement<Reader> {
                     }
                     existingReader.setEmailReader(newEmail);
                     break;
-                    
+
                 case "phoneNumber":
                     String newPhone = (String) value;
                     if (!newPhone.isEmpty() && !phoneValidator.validate(newPhone)) {
@@ -119,7 +119,7 @@ public class ReaderManagementService implements IManagement<Reader> {
                 case "expiry":
                     existingReader.setExpiry((LocalDateTime) value);
                     break;
-                    
+
                 case "lock":
                     existingReader.setLock((Boolean) value);
                     break;
@@ -128,7 +128,7 @@ public class ReaderManagementService implements IManagement<Reader> {
                     break;
             }
         }
-        
+
         FileReaderCSV.writeFile(readers);
     }
 
@@ -168,27 +168,12 @@ public class ReaderManagementService implements IManagement<Reader> {
     public List<Reader> findReaderByIdOrName(String input) {
         List<Reader> foundReaders = new ArrayList<>();
         for (Reader reader : readers) {
-            if (reader.getIdReader().contains(input) || 
-                reader.getNameReader().toLowerCase().contains(input.toLowerCase())) {
+            if (reader.getIdReader().contains(input) ||
+                    reader.getNameReader().toLowerCase().contains(input.toLowerCase())) {
                 foundReaders.add(reader);
             }
         }
         return foundReaders;
-    }
-
-    /**
-     * Gia hạn thẻ độc giả
-     * @param id ID của độc giả cần gia hạn
-     * @param reader Thông tin gia hạn
-     */
-    public void extendExpiry(String id, Reader reader) {
-        int index = findIndexById(id);
-        if (index != -1) {
-            Reader existingReader = readers.get(index);
-            existingReader.setExpiry(reader.getExpiry());
-            existingReader.setLock(false);
-            FileReaderCSV.writeFile(readers);
-        }
     }
 
     /**
@@ -228,4 +213,5 @@ public class ReaderManagementService implements IManagement<Reader> {
                 .filter(reader -> !reader.isLock())
                 .collect(Collectors.toList());
     }
+
 }

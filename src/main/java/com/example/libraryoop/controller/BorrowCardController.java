@@ -1,7 +1,9 @@
 package com.example.libraryoop.controller;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.example.libraryoop.model.Book;
@@ -56,8 +58,7 @@ public class BorrowCardController {
         txtAuthor.setText(book.getAuthor());
         txtAuthor.setDisable(true);
 
-        txtYear.setText(book.getPublishingYear() != null ? 
-            String.valueOf(book.getPublishingYear().getValue()) : "");
+        txtYear.setText(book.getPublishingYear() != null ? String.valueOf(book.getPublishingYear().getValue()) : "");
         txtYear.setDisable(true);
 
         txtBorrowCode.setText(IdGenerator.generateId("C"));
@@ -69,8 +70,7 @@ public class BorrowCardController {
 
         // Lưu danh sách độc giả hợp lệ vào ComboBox
         comboReaderId.setItems(FXCollections.observableArrayList(
-            validReaders.stream().map(Reader::getIdReader).collect(Collectors.toList())
-        ));
+                validReaders.stream().map(Reader::getIdReader).collect(Collectors.toList())));
     }
 
     @FXML
@@ -93,8 +93,7 @@ public class BorrowCardController {
             return;
         }
 
-        LocalDateTime loanDay = dpBorrowDate.getValue() != null ? 
-            dpBorrowDate.getValue().atStartOfDay() : null;
+        LocalDateTime loanDay = dpBorrowDate.getValue() != null ? dpBorrowDate.getValue().atStartOfDay() : null;
         if (loanDay == null) {
             showAlert("Lỗi", "Vui lòng chọn ngày mượn!");
             return;
@@ -106,23 +105,36 @@ public class BorrowCardController {
                 .findFirst()
                 .orElse(null);
 
-        if (reader == null || reader.isLock()) {
-            showAlert("Lỗi", "Mã độc giả không hợp lệ hoặc đã bị khóa!");
+        if (reader == null) {
+            showAlert("Lỗi", "Mã độc giả không hợp lệ!");
             return;
         }
 
+        // Kiểm tra xem độc giả đã mượn sách chưa
+        BorrowCardManagementService borrowService = new BorrowCardManagementService();
+        if (borrowService.hasActiveBorrowCard(readerId)) {
+            showAlert("Lỗi", "Độc giả này đã mượn sách và chưa trả!");
+            return;
+        }
+
+        // Tạo phiếu mượn mới
         String borrowCode = txtBorrowCode.getText();
         BorrowCard card = new BorrowCard(borrowCode, selectedBook, reader, quantity, loanDay);
 
-        BorrowCardManagementService service = new BorrowCardManagementService();
-        service.addNewBorrowCard(card);
+        // Thêm phiếu mượn và khóa độc giả
+        try {
+            borrowService.addNewBorrowCard(card);
+            // Khóa độc giả
+            ReaderManagementService readerService = new ReaderManagementService();
+            Map<String, Object> updates = new HashMap<>();
+            updates.put("lock", true);
+            readerService.update(readerId, updates);
 
-        // Cập nhật số lượng sách trong BookManagementService
-        BookManagementService bookService = new BookManagementService();
-        bookService.updateBookQuantity(selectedBook, -quantity);
-
-        showAlert("Thông báo", "Mượn sách thành công!");
-        ((Stage) btnBorrow.getScene().getWindow()).close();
+            showAlert("Thông báo", "Mượn sách thành công!");
+            ((Stage) btnBorrow.getScene().getWindow()).close();
+        } catch (Exception e) {
+            showAlert("Lỗi", "Không thể mượn sách: " + e.getMessage());
+        }
     }
 
     private void showAlert(String title, String content) {

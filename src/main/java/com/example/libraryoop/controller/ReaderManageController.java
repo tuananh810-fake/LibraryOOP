@@ -111,7 +111,7 @@ public class ReaderManageController {
         btnDelete.setOnAction(e -> handleDelete());
         generateAndShowNewId();
         btnClear.setOnAction(e -> {handleClear();
-        generateAndShowNewId();
+            generateAndShowNewId();
         });
 
         refreshTable();
@@ -148,7 +148,7 @@ public class ReaderManageController {
             showAlert("Thiếu thông tin", "Tên độc giả là bắt buộc.");
             return;
         }
-        
+
         // Validate email using EmailValidate class
         String email = txtEmail.getText().trim();
         if (!email.isEmpty() && !emailValidator.validate(email)) {

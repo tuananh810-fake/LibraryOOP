@@ -115,7 +115,7 @@ public class BorrowCardManageController {
         service.returnBook(selectedCard);
         loadBorrowCards(); // Làm mới danh sách thẻ mượn sau khi trả sách
     }
-    
+
     private void loadBorrowCards() {
         ObservableList<BorrowCard> borrowCards =
                 FXCollections.observableArrayList(service.getAllBorrowCards());

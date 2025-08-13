@@ -1,7 +1,9 @@
 package com.example.libraryoop.service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.example.libraryoop.file_handle.BorrowCardCSV;
 import com.example.libraryoop.model.Book;
@@ -28,10 +30,11 @@ public class BorrowCardManagementService {
             if (numberOfBooks < quantity) {
                 throw new IllegalArgumentException("Không đủ sách để mượn");
             }
+            // Cập nhật số lượng sách
             book.setNumberOfBooks(numberOfBooks - quantity);
-            bookService.delete(book.getIdBook()); // Xóa cũ
-            bookService.addBook(book); // Thêm lại với số lượng mới
+            bookService.updateBook(book);
         }
+
         borrowCardList.add(borrowCard);
         BorrowCardCSV.writeBorrowCardListToFile(borrowCardList);
     }
@@ -90,15 +93,33 @@ public class BorrowCardManagementService {
             throw new IllegalArgumentException("Phiếu mượn không thể null");
         }
 
-        // Tăng số lượng sách trong kho
+        // Tìm sách trong kho và cập nhật số lượng
         Book book = bookService.getBookById(selectedCard.getBook().getIdBook());
         if (book != null) {
             book.setNumberOfBooks(book.getNumberOfBooks() + selectedCard.getQuantity());
-            bookService.delete(book.getIdBook()); // Xóa cũ
-            bookService.addBook(book); // Thêm lại với số lượng mới
+            bookService.updateBook(book);
+        }
+
+        // Mở khóa độc giả
+        try {
+            ReaderManagementService readerService = new ReaderManagementService();
+            Map<String, Object> updates = new HashMap<>();
+            updates.put("lock", false);
+            readerService.update(selectedCard.getReader().getIdReader(), updates);
+        } catch (Exception e) {
+            System.err.println("Không thể mở khóa độc giả: " + e.getMessage());
         }
 
         // Xóa phiếu mượn
-        deleteByIdBorrowCard(selectedCard.getIdBorrowCard());
+        borrowCardList.remove(findIndexById(selectedCard.getIdBorrowCard()));
+        BorrowCardCSV.writeBorrowCardListToFile(borrowCardList);
+    }
+
+    /**
+     * Kiểm tra xem độc giả có phiếu mượn đang hoạt động không
+     */
+    public boolean hasActiveBorrowCard(String readerId) {
+        return borrowCardList.stream()
+                .anyMatch(card -> card.getReader().getIdReader().equals(readerId));
     }
 }

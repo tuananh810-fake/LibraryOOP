@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.example.libraryoop.model.Book;
-import com.example.libraryoop.service.BookManagementService;  
+import com.example.libraryoop.service.BookManagementService;
 import com.example.libraryoop.util.IdGenerator;
 
 import javafx.beans.property.SimpleStringProperty;
@@ -76,7 +76,7 @@ public class LibraryManageController {
         btnDeleteBook.setOnAction(e -> handleDeleteBook());
         generateAndShowNewId();
         btnClearBook.setOnAction(e -> {clearFormBook();
-        generateAndShowNewId();
+            generateAndShowNewId();
         });
         txtId.setDisable(true);
 
@@ -193,11 +193,11 @@ public class LibraryManageController {
 
     private void clearFormBook() {
         txtId.clear();
-        txtName.clear(); 
-        txtAuthor.clear(); 
-        txtCategory.clear(); 
-        txtPublisher.clear(); 
-        txtYear.clear(); 
+        txtName.clear();
+        txtAuthor.clear();
+        txtCategory.clear();
+        txtPublisher.clear();
+        txtYear.clear();
         txtNumber.clear();
         // txtId.setDisable(false); id luôn bị khóa
         generateAndShowNewId(); // Tạo ID mới khi clear form
