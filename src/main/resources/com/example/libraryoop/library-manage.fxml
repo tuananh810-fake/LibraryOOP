@@ -70,6 +70,7 @@
       </GridPane>
 
       <HBox alignment="CENTER_RIGHT" spacing="10">
+         <Button fx:id="btnBorrowBook" layoutX="699.0" layoutY="10.0" text="Mượn" />
          <Button fx:id="btnAddBook" text="Thêm" />
          <Button fx:id="btnUpdateBook" text="Sửa" />
          <Button fx:id="btnDeleteBook" text="Xóa" />

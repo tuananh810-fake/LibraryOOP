@@ -1,6 +1,7 @@
 module com.example.libraryoop {
     requires javafx.controls;
     requires javafx.fxml;
+    requires javafx.base;
 
 
     opens com.example.libraryoop to javafx.fxml;

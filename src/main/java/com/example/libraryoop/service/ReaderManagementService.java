@@ -4,11 +4,12 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.example.libraryoop.file_handle.FileReaderCSV;
 import com.example.libraryoop.model.Reader;
-import com.example.libraryoop.validate.EmailValidate;
 import com.example.libraryoop.util.IdGenerator;
+import com.example.libraryoop.validate.EmailValidate;
 import com.example.libraryoop.validate.PhoneNumberValidate;
 
 /**
@@ -24,7 +25,6 @@ public class ReaderManagementService implements IManagement<Reader> {
      */
     public ReaderManagementService() {
         FileReaderCSV.readFile(readers);
-        autoSetLock();
     }
 
     /**
@@ -177,26 +177,6 @@ public class ReaderManagementService implements IManagement<Reader> {
     }
 
     /**
-     * Tự động khóa tài khoản độc giả hết hạn
-     */
-    public static void autoSetLock() {
-        LocalDateTime now = LocalDateTime.now();
-        boolean hasChanges = false;
-        
-        for (Reader reader : readers) {
-            if (reader.getExpiry() != null && !reader.getExpiry().isAfter(now)) {
-                reader.setLock(true);
-                hasChanges = true;
-            }
-        }
-        
-        // Chỉ lưu file khi có sự thay đổi
-        if (hasChanges) {
-            FileReaderCSV.writeFile(readers);
-        }
-    }
-
-    /**
      * Gia hạn thẻ độc giả
      * @param id ID của độc giả cần gia hạn
      * @param reader Thông tin gia hạn
@@ -239,10 +219,13 @@ public class ReaderManagementService implements IManagement<Reader> {
         return index != -1 ? readers.get(index) : null;
     }
 
-    public static Reader getCallCardById(String readerId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getCallCardById'");
+    /**
+     * Lấy danh sách tất cả độc giả hợp lệ (không bị khóa)
+     * @return Danh sách độc giả hợp lệ
+     */
+    public List<Reader> getAllValidReaders() {
+        return readers.stream()
+                .filter(reader -> !reader.isLock())
+                .collect(Collectors.toList());
     }
-
-
 }

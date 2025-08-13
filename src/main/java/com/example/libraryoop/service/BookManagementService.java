@@ -163,4 +163,16 @@ public class BookManagementService {
         }
         return null;
     }
+
+    /*
+     * Cập nhập số lượng sách
+     */
+    public void updateBookQuantity(Book book, int quantity) {
+        if (book == null) {
+            throw new IllegalArgumentException("Book cannot be null");
+        }
+        int currentQuantity = book.getNumberOfBooks();
+        book.setNumberOfBooks(currentQuantity + quantity);
+        FileBookCSV.overwriteBooksToCSV(bookCatalog);
+    }
 }

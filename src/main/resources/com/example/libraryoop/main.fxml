@@ -40,6 +40,14 @@
                                 <Insets top="20.0" />
                             </VBox.margin>
                         </Button>
+                  <Button contentDisplay="CENTER" layoutX="25.0" layoutY="176.0" mnemonicParsing="false" onAction="#onBorrowCardManage" prefHeight="40.0" prefWidth="200.0" styleClass="sidebar-button" text="Borrow Card Manage">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets top="20.0" />
+                     </VBox.margin>
+                  </Button>
                         <Button contentDisplay="CENTER" layoutX="25.0" layoutY="176.0" mnemonicParsing="false" onAction="#onUserManage" prefHeight="40.0" prefWidth="200.0" styleClass="sidebar-button" text="User Manage">
                             <font>
                                 <Font size="14.0" />

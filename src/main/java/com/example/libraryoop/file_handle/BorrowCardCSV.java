@@ -1,12 +1,9 @@
 package com.example.libraryoop.file_handle;
 
-import com.example.libraryoop.model.BorrowCard;
-import com.example.libraryoop.service.*;
-import com.example.libraryoop.model.Reader;
-import com.example.libraryoop.model.Book;
-
-
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -17,9 +14,15 @@ import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.StringJoiner;
 
+import com.example.libraryoop.model.Book;
+import com.example.libraryoop.model.BorrowCard;
+import com.example.libraryoop.model.Reader;
+import com.example.libraryoop.service.BookManagementService;
+import com.example.libraryoop.service.ReaderManagementService;
+
 public class BorrowCardCSV {
     private static final Path EXTERNAL_PATH = Paths.get("data", "BorrowCardData.csv");
-    private static final String HEADER = "ID_CALLCARD || BOOK || AUTHOR || PUBLISHINGYEAR || QUANTILY || ID_READER || BOOKLOANDAY";
+    private static final String HEADER = "ID_BORROW_CARD || BOOK || AUTHOR || PUBLISHINGYEAR || QUANTILY || ID_READER || BOOKLOANDAY";
     private static final String DELIM_REGEX = "\\s*\\|\\|\\s*"; // split theo " || " (có thể có khoảng trắng)
     public static final String NULLVALUE = ""; // định nghĩa giá trị null trong file CSV
 
@@ -34,17 +37,17 @@ public class BorrowCardCSV {
     /**
      * Ghi danh sách BorrowCard ra file external (data/BorrowCardData.csv).
      */
-    public static void writeCallCardListToFile(List<BorrowCard> borrowCardList) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(EXTERNAL_PATH.toFile()))) {
+    public static void writeBorrowCardListToFile(List<BorrowCard> borrowCardList) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(EXTERNAL_PATH.toFile(), false))) {
             writer.write(HEADER);
             writer.newLine();
             for (BorrowCard borrowCard : borrowCardList) {
                 StringJoiner sj = new StringJoiner(" || ");
-                sj.add(nullToEmpty(borrowCard.getIdCallCard()));
+                sj.add(nullToEmpty(borrowCard.getIdBorrowCard()));
                 sj.add(nullToEmpty(borrowCard.getBook().getNameBook())); // BOOK
                 sj.add(nullToEmpty(borrowCard.getBook().getAuthor())); // AUTHOR
                 sj.add(borrowCard.getBook().getPublishingYear() == null ? NULLVALUE
-                        : String.valueOf(borrowCard.getBook())); // PUBLISHINGYEAR
+                        : String.valueOf(borrowCard.getBook().getPublishingYear().getValue())); // PUBLISHINGYEAR
                 sj.add(String.valueOf(borrowCard.getQuantity())); // QUANTILY
                 sj.add(nullToEmpty(borrowCard.getReader().getIdReader())); // ID_READER
                 sj.add(borrowCard.getBookLoanDay() == null ? NULLVALUE : borrowCard.getBookLoanDay().toString()); // BOOKLOANDAY
@@ -60,14 +63,31 @@ public class BorrowCardCSV {
      * Đọc file CSV vào danh sách BorrowCard.
      * Nếu file không tồn tại sẽ tạo file rỗng và trả về danh sách trống.
      */
-    public static void readFile(List<BorrowCard> callCardList) {
+    public static void readFile(List<BorrowCard> borrowCardList) {
         try {
-            // ...existing code for file creation...
+            // Tạo folder nếu chưa có
+            if (Files.notExists(EXTERNAL_PATH.getParent())) {
+                Files.createDirectories(EXTERNAL_PATH.getParent());
+            }
+            // Tạo file rỗng với header nếu chưa có
+            if (Files.notExists(EXTERNAL_PATH)) {
+                try (BufferedWriter bw = Files.newBufferedWriter(EXTERNAL_PATH,
+                        StandardCharsets.UTF_8, java.nio.file.StandardOpenOption.CREATE)) {
+                    bw.write(HEADER);
+                    bw.newLine();
+                }
+                borrowCardList.clear();
+                return;
+            }
 
             try (BufferedReader br = Files.newBufferedReader(EXTERNAL_PATH, StandardCharsets.UTF_8)) {
                 String line;
                 boolean first = true;
-                callCardList.clear();
+                borrowCardList.clear();
+
+                // Tạo service một lần duy nhất
+                ReaderManagementService readerService = new ReaderManagementService();
+                BookManagementService bookService = new BookManagementService();
 
                 while ((line = br.readLine()) != null) {
                     if (first) {
@@ -81,7 +101,7 @@ public class BorrowCardCSV {
                     String[] cols = line.split(DELIM_REGEX, -1);
 
                     // Đọc các trường theo thứ tự trong header
-                    String idCallCard = cols.length > 0 ? emptyToNull(cols[0].trim()) : "";
+                    String idBorrowCard = cols.length > 0 ? emptyToNull(cols[0].trim()) : "";
                     String bookName = cols.length > 1 ? emptyToNull(cols[1].trim()) : "";
                     String author = cols.length > 2 ? emptyToNull(cols[2].trim()) : "";
 
@@ -119,20 +139,30 @@ public class BorrowCardCSV {
                     }
 
                     // Tạo đối tượng Reader
-                    ReaderManagementService readerService = new ReaderManagementService();
                     Reader idreader = readerService.getReaderById(readerId);
                     if (idreader == null) {
                         System.err.println("Reader not found for ID: " + readerId);
                         continue;
                     }
 
-                    // Tạo đối tượng Book (cần thêm BookManagementService)
-                    Book book = new Book(bookName, author, publishingYear);
+                    // Lấy Book từ BookManagementService để đồng bộ thông tin
+                    Book book = null;
+                    for (Book b : bookService.getBookCatalog()) {
+                        if (b.getNameBook().equals(bookName) && b.getAuthor().equals(author)
+                                && ((b.getPublishingYear() == null && publishingYear == null)
+                                    || (b.getPublishingYear() != null && b.getPublishingYear().equals(publishingYear)))) {
+                            book = b;
+                            break;
+                        }
+                    }
+                    // Nếu không tìm thấy, tạo Book tạm
+                    if (book == null) {
+                        book = new Book(bookName, author, publishingYear);
+                    }
 
-                    int quantily = 0;
                     // Tạo BorrowCard với đầy đủ thông tin
-                    BorrowCard borrowCard = new BorrowCard(idCallCard ,book, idreader, quantily, bookLoanDay);
-                    callCardList.add(borrowCard);
+                    BorrowCard borrowCard = new BorrowCard(idBorrowCard, book, idreader, quantity, bookLoanDay);
+                    borrowCardList.add(borrowCard);
                 }
             }
         } catch (IOException e) {

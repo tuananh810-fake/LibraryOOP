@@ -1,11 +1,11 @@
 package com.example.libraryoop.controller;
 
+import java.io.IOException;
+
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.layout.AnchorPane;
-
-import java.io.IOException;
 
 public class MainController {
 
@@ -36,6 +36,11 @@ public class MainController {
     @FXML
     private void onManagerInfo() {
         loadPage("/com/example/libraryoop/manager-info.fxml");
+    }
+
+    @FXML
+    private void onBorrowCardManage() {
+        loadPage("/com/example/libraryoop/borrow-card-manage.fxml");
     }
 
     /** Load một file FXML con và đặt vào contentPane */

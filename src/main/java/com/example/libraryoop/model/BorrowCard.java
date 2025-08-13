@@ -3,14 +3,14 @@ package com.example.libraryoop.model;
 import java.time.LocalDateTime;
 
 public class BorrowCard {
-    private String idCallCard;      // id thẻ mượn sách
+    private String idBorrowCard;      // id thẻ mượn sách
     private Book book;             // Thông tin sách mượn
     private Reader reader;         // Thông tin người mượn
     private int quantity;          // Số lượng mượn
     private LocalDateTime bookLoanDay;  // Ngày mượn sách
 
-    public BorrowCard(String idCallCard, Book book, Reader reader, int quantity, LocalDateTime bookLoanDay) {
-        this.idCallCard = idCallCard;
+    public BorrowCard(String idBorrowCard, Book book, Reader reader, int quantity, LocalDateTime bookLoanDay) {
+        this.idBorrowCard = idBorrowCard;
         this.book = book;
         this.reader = reader;
         this.quantity = quantity;
@@ -18,12 +18,12 @@ public class BorrowCard {
     }
 
     // Getters and Setters
-    public String getIdCallCard() {
-        return idCallCard;
+    public String getIdBorrowCard() {
+        return idBorrowCard;
     }
 
-    public void setIdCallCard(String idCallCard) {
-        this.idCallCard = idCallCard;
+    public void setIdBorrowCard(String idBorrowCard) {
+        this.idBorrowCard = idBorrowCard;
     }
 
     public Book getBook() {
