@@ -1,5 +1,7 @@
 package com.example.libraryoop.controller;
 
+import java.io.IOException;
+import java.net.URL;
 import java.time.Year;
 import java.util.HashMap;
 import java.util.Map;
@@ -21,6 +23,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import com.example.libraryoop.Main;
 
 public class LibraryManageController {
 
@@ -33,6 +36,9 @@ public class LibraryManageController {
     @FXML private TableColumn<Book, String> colPublisher;
     @FXML private TableColumn<Book, String> colYear;
     @FXML private TableColumn<Book, String> colNumber;
+
+    // Search field
+    @FXML private TextField txtSearch;
 
     // Form fields
     @FXML private TextField txtId;
@@ -67,7 +73,19 @@ public class LibraryManageController {
         colNumber.setCellValueFactory(c -> new SimpleStringProperty(String.valueOf(c.getValue().getNumberOfBooks())));
 
         tableBooks.setItems(bookList);
-        tableBooks.getSelectionModel().selectedItemProperty().addListener((obs, o, n) -> fillForm(n));
+        tableBooks.getSelectionModel().selectedItemProperty()
+                .addListener((observable, oldValue, newValue) -> fillForm(newValue));
+
+        // Search functionality
+        if (txtSearch != null) {
+            txtSearch.textProperty().addListener((observable, oldValue, newValue) -> {
+                if (newValue == null || newValue.trim().isEmpty()) {
+                    refreshTableBook();
+                } else {
+                    bookList.setAll(bookService.searchBooks(newValue));
+                }
+            });
+        }
 
         // handlers (requires fx:id in FXML)
         btnBorrowBook.setOnAction(e -> handleBorrowBook());
@@ -75,10 +93,13 @@ public class LibraryManageController {
         btnUpdateBook.setOnAction(e -> handleUpdateBook());
         btnDeleteBook.setOnAction(e -> handleDeleteBook());
         generateAndShowNewId();
-        btnClearBook.setOnAction(e -> {clearFormBook();
+        btnClearBook.setOnAction(e -> {
+            clearFormBook();
             generateAndShowNewId();
         });
         txtId.setDisable(true);
+
+        // Suppress unused parameter warnings
 
         refreshTableBook();
     }
@@ -176,18 +197,37 @@ public class LibraryManageController {
             return;
         }
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/libraryoop/borrow-card.fxml"));
+            // Try to load FXML directly from Main class
+            URL fxmlUrl = Main.class.getResource("borrow-card.fxml");
+            if (fxmlUrl == null) {
+                // If that fails, try absolute path
+                fxmlUrl = getClass().getResource("/com/example/libraryoop/borrow-card.fxml");
+            }
+
+            if (fxmlUrl == null) {
+                throw new IOException("Could not find borrow-card.fxml");
+            }
+
+            FXMLLoader loader = new FXMLLoader(fxmlUrl);
             Parent root = loader.load();
+
             BorrowCardController controller = loader.getController();
-            controller.setBook(selectedBook); // Truyền sách sang borrow card
+            if (controller == null) {
+                throw new IOException("Could not load BorrowCardController");
+            }
+
+            controller.setBook(selectedBook);
+
             Stage dialog = new Stage();
-            dialog.setTitle("Mượn sách");
+            dialog.setTitle("Mượn sách - " + selectedBook.getNameBook());
             dialog.setScene(new Scene(root));
             dialog.initModality(javafx.stage.Modality.APPLICATION_MODAL);
             dialog.showAndWait();
-            refreshTableBook(); // Làm mới bảng sách sau khi mượn
-        } catch (Exception e) {
+
+            refreshTableBook();
+        } catch (IOException e) {
             e.printStackTrace();
+            showAlert("Lỗi", "Không thể mở form mượn sách: " + e.getMessage());
         }
     }
 

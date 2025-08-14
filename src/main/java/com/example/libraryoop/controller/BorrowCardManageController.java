@@ -1,6 +1,8 @@
 package com.example.libraryoop.controller;
 
 import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import com.example.libraryoop.model.BorrowCard;
 import com.example.libraryoop.service.BorrowCardManagementService;
@@ -9,14 +11,13 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.*;
-import javafx.stage.Stage;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 
 public class BorrowCardManageController {
 
@@ -51,8 +52,6 @@ public class BorrowCardManageController {
     private Button btnReturn;
 
     private BorrowCardManagementService service;
-    private Task<Void> searchTask;
-    private ObservableList<BorrowCard> allBorrowCards;
 
     @FXML
     public void initialize() {
@@ -64,27 +63,15 @@ public class BorrowCardManageController {
         );
         colTitle.setCellValueFactory(cellData -> {
             if (cellData.getValue().getBook() != null) {
-                return javafx.beans.property.SimpleStringProperty.stringExpression(
-                        javafx.beans.binding.Bindings.createStringBinding(
-                                () -> cellData.getValue().getBook().getNameBook()
-                        )
-                );
+                return new SimpleStringProperty(cellData.getValue().getBook().getNameBook());
             }
-            return javafx.beans.property.SimpleStringProperty.stringExpression(
-                    javafx.beans.binding.Bindings.createStringBinding(() -> "")
-            );
+            return new SimpleStringProperty("");
         });
         colReaderId.setCellValueFactory(cellData -> {
             if (cellData.getValue().getReader() != null) {
-                return javafx.beans.property.SimpleStringProperty.stringExpression(
-                        javafx.beans.binding.Bindings.createStringBinding(
-                                () -> cellData.getValue().getReader().getIdReader()
-                        )
-                );
+                return new SimpleStringProperty(cellData.getValue().getReader().getIdReader());
             }
-            return javafx.beans.property.SimpleStringProperty.stringExpression(
-                    javafx.beans.binding.Bindings.createStringBinding(() -> "")
-            );
+            return new SimpleStringProperty("");
         });
         colQuantity.setCellValueFactory(cellData ->
                 new SimpleIntegerProperty(cellData.getValue().getQuantity()).asObject()
@@ -92,16 +79,13 @@ public class BorrowCardManageController {
         colLoanDay.setCellValueFactory(cellData -> {
             if (cellData.getValue().getBookLoanDay() != null) {
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-                return javafx.beans.property.SimpleStringProperty.stringExpression(
-                        javafx.beans.binding.Bindings.createStringBinding(
-                                () -> cellData.getValue().getBookLoanDay().format(formatter)
-                        )
-                );
+                return new SimpleStringProperty(cellData.getValue().getBookLoanDay().format(formatter));
             }
-            return javafx.beans.property.SimpleStringProperty.stringExpression(
-                    javafx.beans.binding.Bindings.createStringBinding(() -> "")
-            );
+            return new SimpleStringProperty("");
         });
+
+        // Thiết lập tìm kiếm
+        setupSearch();
 
         loadBorrowCards();
     }
@@ -134,8 +118,46 @@ public class BorrowCardManageController {
     }
 
     private void loadBorrowCards() {
-        ObservableList<BorrowCard> borrowCards =
-                FXCollections.observableArrayList(service.getAllBorrowCards());
-        tableBorrowCard.setItems(borrowCards);
+        tableBorrowCard.setItems(FXCollections.observableArrayList(service.getAllBorrowCards()));
+    }
+
+    private void setupSearch() {
+        // Thiết lập nút tìm kiếm
+        btnSearch.setOnAction(_ -> performSearch());
+
+        // Tìm kiếm khi gõ
+        txtSearch.textProperty().addListener((_, _, _) -> performSearch());
+    }
+
+    private void performSearch() {
+        String searchText = txtSearch.getText().trim().toLowerCase();
+
+        if (searchText.isEmpty()) {
+            loadBorrowCards();
+            return;
+        }
+
+        List<BorrowCard> allCards = service.getAllBorrowCards();
+        List<BorrowCard> searchResults = allCards.stream()
+                .filter(card ->
+                        (card.getIdBorrowCard() != null &&
+                                card.getIdBorrowCard().toLowerCase().contains(searchText)) ||
+                                (card.getBook() != null &&
+                                        card.getBook().getNameBook() != null &&
+                                        card.getBook().getNameBook().toLowerCase().contains(searchText)) ||
+                                (card.getReader() != null &&
+                                        card.getReader().getIdReader() != null &&
+                                        card.getReader().getIdReader().toLowerCase().contains(searchText)))
+                .collect(Collectors.toList());
+
+        tableBorrowCard.setItems(FXCollections.observableArrayList(searchResults));
+
+        if (searchResults.isEmpty()) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Kết quả tìm kiếm");
+            alert.setHeaderText(null);
+            alert.setContentText("Không tìm thấy phiếu mượn nào phù hợp với từ khóa: " + searchText);
+            alert.show();
+        }
     }
 }
