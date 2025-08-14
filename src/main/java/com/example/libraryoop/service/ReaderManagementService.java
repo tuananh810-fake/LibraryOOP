@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.example.libraryoop.file_handle.FileReaderCSV;
+
 import com.example.libraryoop.model.Reader;
 import com.example.libraryoop.util.IdGenerator;
 import com.example.libraryoop.validate.EmailValidate;
@@ -214,4 +215,43 @@ public class ReaderManagementService implements IManagement<Reader> {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Tìm kiếm độc giả theo nhiều tiêu chí
+     * @param searchText từ khóa tìm kiếm
+     * @return danh sách độc giả phù hợp
+     */
+    public List<Reader> searchReaders(String searchText) {
+        if (searchText == null || searchText.trim().isEmpty()) {
+            return new ArrayList<>(readers);
+        }
+
+        String searchLower = searchText.toLowerCase().trim();
+        return readers.stream()
+                .filter(reader -> {
+                    // Tìm theo ID
+                    if (reader.getIdReader() != null &&
+                            reader.getIdReader().toLowerCase().contains(searchLower)) {
+                        return true;
+                    }
+                    // Tìm theo tên
+                    if (reader.getNameReader() != null &&
+                            reader.getNameReader().toLowerCase().contains(searchLower)) {
+                        return true;
+                    }
+                    // Tìm theo địa chỉ
+                    if (reader.getAddressReader() != null &&
+                            reader.getAddressReader().toLowerCase().contains(searchLower)) {
+                        return true;
+                    }
+                    // Tìm theo email
+                    if (reader.getEmailReader() != null &&
+                            reader.getEmailReader().toLowerCase().contains(searchLower)) {
+                        return true;
+                    }
+                    // Tìm theo số điện thoại
+                    return reader.getPhoneNumber() != null &&
+                            reader.getPhoneNumber().contains(searchLower);
+                })
+                .collect(Collectors.toList());
+    }
 }

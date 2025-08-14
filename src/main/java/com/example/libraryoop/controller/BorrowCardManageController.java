@@ -9,11 +9,14 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.stage.Stage;
 
 public class BorrowCardManageController {
 
@@ -35,7 +38,21 @@ public class BorrowCardManageController {
     @FXML
     private TableColumn<BorrowCard, String> colLoanDay;
 
+    @FXML
+    private TextField txtSearch;
+
+    @FXML
+    private Button btnSearch;
+
+    @FXML
+    private Button btnAdd;
+
+    @FXML
+    private Button btnReturn;
+
     private BorrowCardManagementService service;
+    private Task<Void> searchTask;
+    private ObservableList<BorrowCard> allBorrowCards;
 
     @FXML
     public void initialize() {

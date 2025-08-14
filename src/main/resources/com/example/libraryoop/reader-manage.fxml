@@ -19,6 +19,13 @@
    <children>
       <VBox prefHeight="600.0" prefWidth="630.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
          <children>
+            <HBox spacing="10">
+               <VBox.margin>
+                  <Insets bottom="10.0" />
+               </VBox.margin>
+               <TextField fx:id="txtSearch" promptText="Tìm kiếm độc giả..." HBox.hgrow="ALWAYS" />
+               <Button fx:id="btnSearch" text="🔍 Tìm kiếm" />
+            </HBox>
          
                               <!-- TableView -->
             <TableView fx:id="tableReaders" prefHeight="200.0" prefWidth="600.0" VBox.vgrow="ALWAYS">

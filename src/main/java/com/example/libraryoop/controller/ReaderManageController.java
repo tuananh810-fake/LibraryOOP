@@ -44,6 +44,12 @@ public class ReaderManageController {
     @FXML
     private TableColumn<Reader, Boolean> colLock;
 
+    // Search components
+    @FXML
+    private TextField txtSearch;
+    @FXML
+    private Button btnSearch;
+
     // Form fields
     @FXML
     private TextField txtId;
@@ -94,6 +100,10 @@ public class ReaderManageController {
         colName.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getNameReader()));
         colAddress.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getAddressReader()));
         colEmail.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getEmailReader()));
+
+        // Xử lý tìm kiếm
+        btnSearch.setOnAction(_ -> handleSearch());
+        txtSearch.textProperty().addListener((_, _, newValue) -> handleSearch());
         colPhone.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getPhoneNumber()));
         colExpiry.setCellValueFactory(cell -> {
             LocalDateTime exp = cell.getValue().getExpiry();
@@ -103,14 +113,15 @@ public class ReaderManageController {
         colLock.setCellFactory(CheckBoxTableCell.forTableColumn(colLock));
 
         tableReaders.setItems(readerList);
-        tableReaders.getSelectionModel().selectedItemProperty().addListener((obs, o, n) -> fillForm(n));
+        tableReaders.getSelectionModel().selectedItemProperty().addListener((_, _, selectedReader) -> fillForm(selectedReader));
 
         // button handlers (cần fx:id hoặc có thể gán trong FXML via onAction)
-        btnAdd.setOnAction(e -> handleAdd());
-        btnUpdate.setOnAction(e -> handleUpdate());
-        btnDelete.setOnAction(e -> handleDelete());
+        btnAdd.setOnAction(_ -> handleAdd());
+        btnUpdate.setOnAction(_ -> handleUpdate());
+        btnDelete.setOnAction(_ -> handleDelete());
         generateAndShowNewId();
-        btnClear.setOnAction(e -> {handleClear();
+        btnClear.setOnAction(_ -> {
+            handleClear();
             generateAndShowNewId();
         });
 
@@ -250,5 +261,14 @@ public class ReaderManageController {
         a.setHeaderText(null);
         a.setContentText(content);
         a.showAndWait();
+    }
+
+    private void handleSearch() {
+        String searchText = txtSearch.getText().trim();
+        if (searchText.isEmpty()) {
+            refreshTable();
+        } else {
+            readerList.setAll(readerService.searchReaders(searchText));
+        }
     }
 }

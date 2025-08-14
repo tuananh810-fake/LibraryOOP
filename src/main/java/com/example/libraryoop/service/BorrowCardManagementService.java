@@ -12,7 +12,7 @@ import com.example.libraryoop.util.IdGenerator;
 
 public class BorrowCardManagementService {
     private static final List<BorrowCard> borrowCardList = new ArrayList<>();
-    private static final BookManagementService bookService = new BookManagementService(); // Làm cho bookService là static
+    private final BookManagementService bookService = new BookManagementService();
 
     public BorrowCardManagementService() {
         BorrowCardCSV.readFile(borrowCardList);
@@ -30,14 +30,9 @@ public class BorrowCardManagementService {
             if (numberOfBooks < quantity) {
                 throw new IllegalArgumentException("Không đủ sách để mượn");
             }
-            try {
-                // Cập nhật số lượng sách bằng phương thức update với Map
-                Map<String, Object> updates = new HashMap<>();
-                updates.put("numberOfBooks", numberOfBooks - quantity);
-                bookService.update(book.getIdBook(), updates);
-            } catch (Exception e) {
-                throw new IllegalArgumentException("Không thể cập nhật số lượng sách: " + e.getMessage());
-            }
+            // Cập nhật số lượng sách
+            book.setNumberOfBooks(numberOfBooks - quantity);
+            bookService.updateBook(book);
         }
 
         borrowCardList.add(borrowCard);
