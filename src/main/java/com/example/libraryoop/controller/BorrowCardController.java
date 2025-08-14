@@ -25,6 +25,8 @@ public class BorrowCardController {
 
     @FXML
     private Button btnBorrow;
+    
+    private Runnable onBorrowSuccess;
 
     @FXML
     private javafx.scene.control.TextField txtTitle;
@@ -49,6 +51,10 @@ public class BorrowCardController {
 
     private Book selectedBook;
     private List<Reader> validReaders; // lưu lại danh sách để tra cứu khi mượn
+
+    public void setOnBorrowSuccess(Runnable callback) {
+        this.onBorrowSuccess = callback;
+    }
 
     public void setBook(Book book) {
         this.selectedBook = book;
@@ -131,6 +137,9 @@ public class BorrowCardController {
             readerService.update(readerId, updates);
 
             showAlert("Thông báo", "Mượn sách thành công!");
+            if (onBorrowSuccess != null) {
+                onBorrowSuccess.run();
+            }
             ((Stage) btnBorrow.getScene().getWindow()).close();
         } catch (Exception e) {
             showAlert("Lỗi", "Không thể mượn sách: " + e.getMessage());

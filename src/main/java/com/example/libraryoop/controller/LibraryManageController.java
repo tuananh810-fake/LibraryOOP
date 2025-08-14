@@ -52,6 +52,9 @@ public class LibraryManageController {
 
     private final BookManagementService bookService = new BookManagementService();
     private final ObservableList<Book> bookList = FXCollections.observableArrayList();
+    
+    @FXML private TextField txtSearch;
+    @FXML private Button btnSearch;
 
     @FXML
     public void initialize() {
@@ -78,6 +81,18 @@ public class LibraryManageController {
         btnClearBook.setOnAction(e -> {clearFormBook();
             generateAndShowNewId();
         });
+        
+        // Thêm xử lý tìm kiếm
+        btnSearch.setOnAction(e -> handleSearch());
+        // Tìm kiếm khi gõ text
+        txtSearch.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue.trim().isEmpty()) {
+                refreshTableBook(); // Hiện tất cả sách nếu ô tìm kiếm trống
+            } else {
+                bookList.setAll(bookService.searchBooks(newValue.trim()));
+            }
+        });
+        
         txtId.setDisable(true);
 
         refreshTableBook();
@@ -95,7 +110,12 @@ public class LibraryManageController {
     }
 
     private void refreshTableBook() {
-        bookList.setAll(bookService.getAllBooks());
+        // Xóa dữ liệu cũ
+        bookList.clear();
+        // Lấy dữ liệu mới từ service
+        bookList.addAll(bookService.getAllBooks());
+        // Force refresh TableView
+        tableBooks.refresh();
     }
 
     private void handleAddBook() {
@@ -179,13 +199,19 @@ public class LibraryManageController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/libraryoop/borrow-card.fxml"));
             Parent root = loader.load();
             BorrowCardController controller = loader.getController();
+            
+            // Thêm callback để thông báo khi mượn thành công
+            controller.setOnBorrowSuccess(() -> {
+                refreshTableBook();
+                clearFormBook();
+            });
+            
             controller.setBook(selectedBook); // Truyền sách sang borrow card
             Stage dialog = new Stage();
             dialog.setTitle("Mượn sách");
             dialog.setScene(new Scene(root));
             dialog.initModality(javafx.stage.Modality.APPLICATION_MODAL);
             dialog.showAndWait();
-            refreshTableBook(); // Làm mới bảng sách sau khi mượn
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -230,5 +256,14 @@ public class LibraryManageController {
         } while (bookService.getBookById(newId) != null);  // Assuming you have getBookById in your service
 
         txtId.setText(newId);
+    }
+
+    private void handleSearch() {
+        String searchText = txtSearch.getText().trim();
+        if (searchText.isEmpty()) {
+            refreshTableBook(); // Hiện tất cả sách nếu ô tìm kiếm trống
+        } else {
+            bookList.setAll(bookService.searchBooks(searchText));
+        }
     }
 }

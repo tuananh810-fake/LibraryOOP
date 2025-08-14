@@ -15,6 +15,11 @@
 <AnchorPane xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.libraryoop.controller.LibraryManageController">
    <VBox spacing="10" AnchorPane.bottomAnchor="10" AnchorPane.leftAnchor="10" AnchorPane.rightAnchor="10" AnchorPane.topAnchor="10">
       <Label style="-fx-font-size: 24px; -fx-font-weight: bold;" text="📚 Quản lý Thư viện" />
+      
+      <HBox spacing="10">
+         <TextField fx:id="txtSearch" promptText="Tìm kiếm sách..." HBox.hgrow="ALWAYS" />
+         <Button fx:id="btnSearch" text="🔍 Tìm kiếm" />
+      </HBox>
 
       <TableView fx:id="tableBooks" prefHeight="300" VBox.vgrow="ALWAYS">
          <columns>

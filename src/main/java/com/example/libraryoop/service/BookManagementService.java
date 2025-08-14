@@ -174,7 +174,9 @@ public class BookManagementService {
     }
 
     public List<Book> getAllBooks() {
-        return bookCatalog;
+        // Đọc lại dữ liệu từ file để đảm bảo dữ liệu mới nhất
+        bookCatalog = FileBookCSV.readBooksFromCSV();
+        return new ArrayList<>(bookCatalog);  // Trả về bản sao để tránh thay đổi trực tiếp
     }
 
     /** Tên chuẩn: getBookById */
