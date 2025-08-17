@@ -83,41 +83,7 @@ Dự án không chỉ hoàn thành các chức năng cơ bản mà còn chú tr�
 ## 📁 Cấu trúc Thư mục
 Dự án được tổ chức theo cấu trúc phân lớp rõ ràng, giúp dễ dàng bảo trì và mở rộng:
 <img width="956" height="1041" alt="image" src="https://github.com/user-attachments/assets/3ff55865-3303-47f4-a7dd-518b18b98e92" />
-LibraryOOP/
-│
-├── data/
-│   # Directory for .csv data files
-│
-├── src/
-│   ├── main/
-│   │   ├── java/
-│   │   │   ├── com/
-│   │   │   │   ├── example/
-│   │   │   │   │   ├── libraryoop/
-│   │   │   │   │   │   ├── controller/
-│   │   │   │   │   │   │   # Classes handling UI logic
-│   │   │   │   │   │   ├── file_handle/
-│   │   │   │   │   │   │   # Classes for reading/writing CSV files
-│   │   │   │   │   │   ├── model/
-│   │   │   │   │   │   │   # POJO classes (Book, User, Reader, etc.)
-│   │   │   │   │   │   ├── service/
-│   │   │   │   │   │   │   # Core business logic
-│   │   │   │   │   │   ├── util/
-│   │   │   │   │   │   │   # Utility classes (IdGenerator, DateTime Formatter, etc.)
-│   │   │   │   │   │   ├── validate/
-│   │   │   │   │   │   │   # Input validation classes
-│   │   │   │   │   │   ├── Launcher.java
-│   │   │   │   │   │   │   # JavaFX application entry point
-│   │   │   │   │   │   └── Main.java
-│   │   │   │   │   │       # Main entry point
-│   │   │   │   │   │
-│   │   └── resources/
-│   │       # Contains .fxml, .css, images, etc.
-│   │
-│   └── pom.xml
-│       # Maven configuration file
-
----
+<img width="738" height="675" alt="image" src="https://github.com/user-attachments/assets/2d55b305-c889-45b8-b517-4b33f3e510f6" />
 
 ## 🚀 Hướng dẫn Cài đặt & Vận hành
 
