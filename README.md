@@ -1,29 +1,23 @@
 # The Library Management Example Project
 
-## Introduction
+## Giới thiệu
 
-This project is a sample implementation of a library management system. It includes management methods for books, members, and loans. The system allows users to add, remove, and update books, members, borrowing and returning status.
+**Yêu cầu:** Lập một chương trình quản lý thư viện
 
-The system is designed to be simple and easy to understand, making it a great starting point for learning about object-oriented.
+**Mô tả:** Phần mềm lưu trữ dữ liệu với cấu trúc đơn giản như csv để lưu trữ các dữ liệu đơn giản. Phần mềm bao gồm rất nhiều gói, gồm cấu trúc dữ liệu thô và các logic làm việc với dữ liệu và xử lý giao diện. Phần giao diện được 
 
-## The Structures
+## Cấu trúc lớp và đối tượng
 
-The project structures includes five packages, including raw data structures and logic for working wwith library's data.
+Dự án này được chia làm 6 gói chính, với các phương thức khác nhau trong từng gói.
 
-The data is stored in different files, whose columns are separated using different delimiters. Since the overall target is for object oriented programming instead of other elements such as data structures, the data is stored in simple text files.
+- com.example.libraryoop.model: Gói này bao gồm các phương thức cơ bản cho dữ liệu mà không bao gồm logic xử lý dữ liệu, bao gồm Book, Reader, Staff, and BorrowCard
+- com.example.libraryoop.util: Gói này có lớp tạo ID, được sử dụng làm mẫu ID cho rất nhiều phần của chương trình
+- com.example.libraryoop.service: Gói này có những logic để làm việc với dữ liệu trong thư viện, bao gồm tìm kiếm, thêm, xóa, sử dữ liệu
+- com.example.libraryoop.file_handle: Gói này gồm những lớp có khả năng sửa dữ liệu bằng cách ghi/ xóa/ thay thế dữ liệu trên tệp CSV
+- com.example.libraryoop.validate: Gói này có những phương thức để xác thực tính hợp lệ của định dạng dữ liệu cá nhân, bao gồm 
+- com.example.libraryoop.controller: Gói này sử dụng mã giao diện JavaFX để hiển thị các kết quả hoặc lỗi trên giao diện ứng dụng
 
-There are different logics for working with data, for example: reading data from files, writing data to files, searching data in files. Specifically, the project includes the following structures:
+Ngoài các gói được sử dụng cho những mục đích trên, còn có 2 lớp khác được sử dụng để thực thi giao diện chính
 
-- com.example.libraryoop.model: This package contains the classes that represent the data in the library, including Book, Reader, Staff, and BorrowCard
-- com.example.libraryoop.util: includes the ID generator that can be used as the common ID structure throughout the program.
-- com.example.libraryoop.service: This package contains the classes that implement the business logic of the library, such as adding, editing, or removing.
-- com.example.libraryoop.validate: This package contains the classes that implement the validation of reader's personal data format, including phong number and email.
-- com.example.libraryoop.controller: This package contains the classes that implement the user interface of the library.
-
-Besides the packages with different usages, there are two classes that are outside these packages, including Main and Launcher.
-
-- Main class is the class to call the javafx interface by calling different fxml files.
-- Launcher is the main runner of the program since it includes the main void that call the Main class to render the GUI of a completed program.
-
-## The Interface
-
+- Lớp Main gọi đến các tệp FXML để gọi các phần của giao diện ứng dụng
+- Launcher là lớp để khởi chạy ứng dụng, vì phương thức main của lớp này gọi lớp Main để chạy chương trình hoàn chỉnh.
