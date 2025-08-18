@@ -1,20 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.libraryoop.controller.BorrowCardManageController">
+<AnchorPane prefHeight="400.0" prefWidth="600.0" stylesheets="@style.css" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.libraryoop.controller.BorrowCardManageController">
     <children>
         <VBox layoutX="312.0" layoutY="92.0" prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
             <children>
-                <HBox spacing="10" alignment="CENTER_LEFT">
-                    <TextField fx:id="txtSearch" promptText="Tìm kiếm phiếu mượn..." HBox.hgrow="ALWAYS" />
-                    <Button fx:id="btnSearch" text="🔍 Tìm kiếm" />
+                <HBox alignment="CENTER_LEFT" spacing="10">
+               <Label prefHeight="35.0" prefWidth="248.0" text=" 📕 Quản lý thẻ mượn">
+                  <font>
+                     <Font name="System Bold" size="24.0" />
+                  </font>
+               </Label>
+                    <TextField fx:id="txtSearch" prefHeight="35.0" prefWidth="334.0" promptText="🔍 Tìm kiếm phiếu mượn..." styleClass="top-bar" HBox.hgrow="ALWAYS" />
+               <VBox.margin>
+                  <Insets bottom="10.0" top="5.0" />
+               </VBox.margin>
                 </HBox>
                 <TableView fx:id="tableBorrowCard" prefHeight="321.0" prefWidth="579.0" VBox.vgrow="ALWAYS">
                     <columns>
@@ -32,6 +42,9 @@
                     <children>
                         <Button alignment="CENTER" mnemonicParsing="false" onAction="#handleOnReturn" prefHeight="26.0" prefWidth="75.0" text="Return" />
                     </children>
+               <VBox.margin>
+                  <Insets bottom="5.0" top="10.0" />
+               </VBox.margin>
                 </HBox>
             </children>
         </VBox>

@@ -47,8 +47,6 @@ public class ReaderManageController {
     // Search components
     @FXML
     private TextField txtSearch;
-    @FXML
-    private Button btnSearch;
 
     // Form fields
     @FXML
@@ -102,7 +100,6 @@ public class ReaderManageController {
         colEmail.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getEmailReader()));
 
         // Xử lý tìm kiếm
-        btnSearch.setOnAction(_ -> handleSearch());
         txtSearch.textProperty().addListener((_, _, newValue) -> handleSearch());
         colPhone.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getPhoneNumber()));
         colExpiry.setCellValueFactory(cell -> {

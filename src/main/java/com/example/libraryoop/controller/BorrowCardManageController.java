@@ -43,9 +43,6 @@ public class BorrowCardManageController {
     private TextField txtSearch;
 
     @FXML
-    private Button btnSearch;
-
-    @FXML
     private Button btnAdd;
 
     @FXML
@@ -122,9 +119,6 @@ public class BorrowCardManageController {
     }
 
     private void setupSearch() {
-        // Thiết lập nút tìm kiếm
-        btnSearch.setOnAction(_ -> performSearch());
-
         // Tìm kiếm khi gõ
         txtSearch.textProperty().addListener((_, _, _) -> performSearch());
     }

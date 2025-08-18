@@ -14,27 +14,32 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.libraryoop.controller.ReaderManageController">
+<AnchorPane stylesheets="@style.css" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.libraryoop.controller.ReaderManageController">
    <children>
       <VBox prefHeight="600.0" prefWidth="630.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
          <children>
             <HBox spacing="10">
                <VBox.margin>
-                  <Insets bottom="10.0" />
+                  <Insets bottom="10.0" top="5.0" />
                </VBox.margin>
-               <TextField fx:id="txtSearch" promptText="Tìm kiếm độc giả..." HBox.hgrow="ALWAYS" />
-               <Button fx:id="btnSearch" text="🔍 Tìm kiếm" />
+               <Label prefHeight="35.0" prefWidth="262.0" text="👤 Quản lý người dùng" HBox.hgrow="NEVER">
+                  <font>
+                     <Font name="System Bold" size="24.0" />
+                  </font>
+               </Label>
+               <TextField fx:id="txtSearch" prefHeight="36.0" prefWidth="368.0" promptText="🔍 Tìm kiếm độc giả..." styleClass="top-bar" HBox.hgrow="ALWAYS" />
             </HBox>
          
                               <!-- TableView -->
             <TableView fx:id="tableReaders" prefHeight="200.0" prefWidth="600.0" VBox.vgrow="ALWAYS">
                <columns>
-                  <TableColumn fx:id="colId" prefWidth="40.79998815059662" text="ID" />
-                  <TableColumn fx:id="colName" prefWidth="128.800048828125" text="Name" />
-                  <TableColumn fx:id="colAddress" prefWidth="124.79998779296875" text="Address" />
-                  <TableColumn fx:id="colEmail" prefWidth="94.40008544921875" text="Email" />
-                  <TableColumn fx:id="colPhone" prefWidth="84.0001220703125" text="Phone" />
+                  <TableColumn fx:id="colId" prefWidth="72.79998433589935" text="ID" />
+                  <TableColumn fx:id="colName" prefWidth="101.60005187988281" text="Name" />
+                  <TableColumn fx:id="colAddress" prefWidth="124.0" text="Address" />
+                  <TableColumn fx:id="colEmail" prefWidth="103.20001220703125" text="Email" />
+                  <TableColumn fx:id="colPhone" prefWidth="68.0" text="Phone" />
                   <TableColumn fx:id="colExpiry" prefWidth="108.800048828125" text="Expiry (DateTime)" />
                   <TableColumn fx:id="colLock" prefWidth="49.5999755859375" text="Locked" />  <!-- thêm -->
                </columns>
@@ -104,7 +109,7 @@
                   <Button fx:id="btnClear" onAction="#handleClear" text="Làm mới" />
                </HBox>
                <VBox.margin>
-                  <Insets top="10.0" />
+                  <Insets bottom="5.0" />
                </VBox.margin>
             </HBox>
          </children>

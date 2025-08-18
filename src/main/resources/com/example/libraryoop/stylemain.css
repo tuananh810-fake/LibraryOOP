@@ -1,0 +1,19 @@
+.sidebar-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+    -fx-font-size: 18px;
+    -fx-alignment: CENTER_LEFT;
+}
+
+.sidebar-button:hover{
+    -fx-background-color: rgba(255, 255, 255, 0.1);
+}
+
+.sidebar {
+    -fx-background-color: linear-gradient(to bottom right, #41a1ea, #191e70);
+}
+
+.main{
+    -fx-background-color: #f6fbff;
+    -fx-background-radius: 15px;
+}
