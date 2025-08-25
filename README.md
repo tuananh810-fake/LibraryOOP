@@ -5,12 +5,9 @@
 [![Maven](https://img.shields.io/badge/Built%20with-Maven-red.svg)](https://maven.apache.org/)
 
 Một ứng dụng Desktop được phát triển bằng **Java** và **JavaFX**, mô phỏng hoạt động quản lý của một thư viện hiện đại. Dự án được thiết kế với mục tiêu cốt lõi là áp dụng và thực hành các nguyên lý Lập trình Hướng đối tượng (OOP) một cách triệt để, từ cấu trúc dữ liệu đến logic nghiệp vụ.
-## 🎥 Demo
-
+🎥 Demo
 Dưới đây là video demo minh họa cách hoạt động của dự án:
-
 [![Watch the video](https://img.youtube.com/vi/j5pc4Ce5wkk/0.jpg)](https://youtu.be/j5pc4Ce5wkk)
-
 Video trình bày các tính năng chính, cách sử dụng, và ví dụ thực tế.
 ---
 
